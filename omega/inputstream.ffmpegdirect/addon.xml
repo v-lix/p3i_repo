@@ -1,25 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<addons>
-<addon id="repository.p3i" name="p3i" version="0.1.0" provider-name="pannal">
-    <extension point="xbmc.addon.repository" name="p3i Kodi Repo">
-        <dir minversion="20.90.0">
-            <info compressed="false">https://raw.githubusercontent.com/pannal/p3i_repo/master/omega/zips/addons.xml</info>
-            <checksum>https://raw.githubusercontent.com/pannal/p3i_repo/master/omega/zips/addons.xml.md5</checksum>
-            <datadir zip="true">https://raw.githubusercontent.com/pannal/p3i_repo/master/omega/zips/</datadir>
-        </dir>
-    </extension>
-    <extension point="xbmc.addon.metadata">
-        <summary>p3i</summary>
-        <description>Binary and Python addons built for the p3i CoreELEC build (aml-4.9-21.3 lineage).</description>
-        <disclaimer></disclaimer>
-        <platform>all</platform>
-        <assets>
-            <icon>icon.png</icon>
-            <fanart>fanart.png</fanart>
-        </assets>
-    </extension>
-</addon>
-
 <addon id="inputstream.ffmpegdirect" version="22.2.5.1" name="Inputstream FFmpeg Direct" provider-name="Ross Nicholson">
   <requires>
     <import addon="kodi.binary.global.main" minversion="2.0.0" version="2.0.2"/>
@@ -79,4 +58,3 @@
     <description lang="zh_CN">InputStream 客户端，用于可通过 FFmpeg 的 libavformat 或 Kodi 的 cURL 打开的流。支持普通 TS、HLS 和 DASH（无DRM）等常见流格式以及其他许多格式。[CR][CR]该插件还支持有重播窗口（通常以天为单位）的归档/捕获服务，并可以在该时间跨度内进行时光平移。[CR][CR]相关文档请访问：https://github.com/xbmc/inputstream.ffmpegdirect/blob/Matrix/README.md</description>
   </extension>
 </addon>
-</addons>
