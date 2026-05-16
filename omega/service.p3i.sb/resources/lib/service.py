@@ -90,12 +90,17 @@ class SBPlayer(xbmc.Player):
             return False
 
     def _audio_codec(self):
-        # getAudioStream returns the currently selected index; details via JSON-RPC.
-        # Use Player.getAvailableAudioStreams + getAudioStream() index, then look
-        # at the codec through xbmc.getInfoLabel which gives us the active codec
-        # without needing the JSON-RPC Player.GetProperties round-trip.
-        codec = xbmc.getInfoLabel("Player.AudioCodec") or ""
-        return codec.lower().strip()
+        # Canonical Kodi infolabel for the active video player's audio codec is
+        # VideoPlayer.AudioCodec (xbmc/GUIInfoManager.cpp). "Player.AudioCodec"
+        # is *not* a real label and Kodi echoes the literal string back, which
+        # used to make _audio_qualifies always fail.
+        codec = xbmc.getInfoLabel("VideoPlayer.AudioCodec") or ""
+        codec = codec.lower().strip()
+        # Defensive: if Kodi echoed the label name back (contains a dot), treat
+        # it as unknown rather than a real codec string.
+        if "." in codec:
+            return ""
+        return codec
 
     def _audio_qualifies(self, codec):
         if not codec:
