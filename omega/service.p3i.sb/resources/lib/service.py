@@ -25,9 +25,11 @@ LAV_MODE_OFF = 0
 # Modes that imply LAV is actually applying SB workarounds.
 ACTIVE_LAV_MODES = (4, 5)
 
-# Audio codec strings reported by Kodi's Player.getAudioStream / VideoInfoTag.
-TRUEHD_CODECS = ("truehd",)
-EAC3_CODECS = ("eac3", "ec3", "ddp", "dd+", "eac-3")
+# Codec-name prefixes reported by VideoPlayer.AudioCodec. Prefix-matched because
+# Kodi returns variants like "truehd_atmos", "eac3_atmos", "eac3_joc" for
+# Atmos/JOC tracks; we want to qualify all of those.
+TRUEHD_PREFIXES = ("truehd",)
+EAC3_PREFIXES = ("eac3", "ec3", "ec-3", "ddp", "dd+")
 
 
 class SBMonitor(xbmc.Monitor):
@@ -105,9 +107,9 @@ class SBPlayer(xbmc.Player):
     def _audio_qualifies(self, codec):
         if not codec:
             return False
-        if codec in TRUEHD_CODECS:
+        if codec.startswith(TRUEHD_PREFIXES):
             return True
-        if codec in EAC3_CODECS:
+        if codec.startswith(EAC3_PREFIXES):
             # Bitrate isn't reliably available at AV-start through the public
             # API. The curated list is the gate: any EAC3 on an SB title is
             # treated as tms. False-positives only re-route through LAV.

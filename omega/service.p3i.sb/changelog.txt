@@ -1,3 +1,9 @@
+v0.1.5
+- Fix: codec gate now accepts Atmos/JOC variants. VideoPlayer.AudioCodec
+  returns names like "truehd_atmos" / "eac3_atmos" / "eac3_joc" for
+  enhanced tracks, and the exact-match check rejected them. Switched
+  to prefix-match so all TrueHD and (E)AC3 variants qualify.
+
 v0.1.4
 - Bump notification timeout from 3s to 5s so the toast survives a
   HDMI mode switch (Amlogic mode change is typically 2-3s and the
