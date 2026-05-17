@@ -13,14 +13,24 @@ addon emits a warning but writes them anyway. Whether they take effect
 mid-playback depends on whether the C++ consumer caches the value at
 codec/stream open. The :status: field documents what we know:
 
-  "live"           — OnSettingChanged + atomic, value picked up per-packet
-                     or per-frame. Late writes from onAVStarted are fine.
-  "live-via-sysfs" — Setting drives a sysfs flag; the change handler
-                     re-pushes the sysfs on every write. Live after the
-                     corresponding C++ patch lands.
-  "lav-class"      — Sampled once at codec/stream open and cached. Needs a
-                     C++ patch (see xbmc commit 72daca6f5a for the LAV
-                     pattern) before late writes take effect.
+  "live"             — OnSettingChanged + atomic, value picked up per-packet
+                       or per-frame. Late writes from onAVStarted are fine.
+  "live-via-sysfs"   — Setting drives a sysfs flag; the change handler
+                       re-pushes the sysfs on every write. Live after the
+                       corresponding C++ patch lands.
+  "live-on-next-cue" — Value is cached in a render-time style struct, but
+                       an observer fires on settings change and the next
+                       drawn subtitle picks it up. Applies within one cue
+                       (typically <1s for dense dialogue, longer for sparse
+                       subs). Useful in practice; not instant.
+  "lav-class"        — Sampled once at codec/stream open and cached. Needs a
+                       C++ patch (see xbmc commit 72daca6f5a for the LAV
+                       pattern) before late writes take effect.
+  "needs-restart"    — Sampled at codec/stream/demuxer open or app startup
+                       and never re-read. Mid-playback write may apply to
+                       the next playback but not the current one. Document
+                       and warn; the addon writes anyway in case the user
+                       wants it set going forward.
 
 Keep this list in sync with SETTINGS.md and the C++ side (xbmc tree).
 """
@@ -87,6 +97,144 @@ VERIFIED = {
             "installed, override.ini writes to this key are skipped (SB helper "
             "owns the key)."
         ),
+    },
+
+    # ------- Subtitles: PGS HDR-to-SDR shader params (per-frame live) -------
+    "subtitles.pgshdrtosdr.brightness": {
+        "status": "live",
+        "notes": "Fed per-frame to the PGS HDR-to-SDR shader as m_pqRefNits.",
+    },
+    "subtitles.pgshdrtosdr.saturation": {
+        "status": "live",
+        "notes": "Fed per-frame to the PGS HDR-to-SDR shader as m_pqSaturation.",
+    },
+    "subtitles.pgshdrtosdr.tonemap": {
+        "status": "live",
+        "notes": "Per-frame: selects the shader tone-mapping pipeline.",
+    },
+    "subtitles.pgshdrtosdr.mode": {
+        "status": "live",
+        "values": "Classic / Linear / Luma (see memory pgs-hdr-color-fix)",
+        "notes": "Per-frame: selects the tonemapping algorithm in the shader.",
+    },
+
+    # ------- Subtitles: other render-time live settings -------
+    "subtitles.captionsalign": {
+        "status": "live",
+        "notes": "Read per-frame in ConvertLibass via rOpts.horizontalAlignment.",
+    },
+    "subtitles.stereoscopicdepth": {
+        "status": "live",
+        "notes": "Read per-frame in GetStereoscopicDepth() for the 3D offset.",
+    },
+    "subtitles.bitmapzoom": {
+        "status": "live",
+        "notes": "Read per-frame for bitmap scale + GPU texture filter.",
+    },
+
+    # ------- Subtitles: style (cached in m_overlayStyle, applies on next cue) -------
+    "subtitles.fontname": {
+        "status": "live-on-next-cue",
+        "notes": "Baked into ASS style at first render; SubtitlesSettings observer triggers re-cache so the next drawn subtitle picks it up.",
+    },
+    "subtitles.fontsize": {
+        "status": "live-on-next-cue",
+        "notes": "Baked into ASS style with playResY scaling. Observer-refreshed.",
+    },
+    "subtitles.style": {
+        "status": "live-on-next-cue",
+        "notes": "Font bold/italic. Observer-refreshed.",
+    },
+    "subtitles.colorpick": {
+        "status": "live-on-next-cue",
+        "notes": "Font colour. Observer-refreshed; applies on next subtitle cue.",
+    },
+    "subtitles.bordersize": {
+        "status": "live-on-next-cue",
+        "notes": "ASS Outline. Observer-refreshed.",
+    },
+    "subtitles.bordercolorpick": {
+        "status": "live-on-next-cue",
+        "notes": "ASS OutlineColour. Observer-refreshed.",
+    },
+    "subtitles.opacity": {
+        "status": "live-on-next-cue",
+        "notes": "Font opacity. Observer-refreshed.",
+    },
+    "subtitles.blur": {
+        "status": "live-on-next-cue",
+        "notes": "Blur. Observer-refreshed.",
+    },
+    "subtitles.backgroundtype": {
+        "status": "live-on-next-cue",
+        "notes": "ASS borderStyle (outline / box). Observer-refreshed.",
+    },
+    "subtitles.shadowcolor": {
+        "status": "live-on-next-cue",
+        "notes": "ASS BackColour (shadow). Observer-refreshed.",
+    },
+    "subtitles.shadowopacity": {
+        "status": "live-on-next-cue",
+        "notes": "Shadow opacity. Observer-refreshed.",
+    },
+    "subtitles.shadowsize": {
+        "status": "live-on-next-cue",
+        "notes": "ASS Shadow. Observer-refreshed.",
+    },
+    "subtitles.bgcolorpick": {
+        "status": "live-on-next-cue",
+        "notes": "Background colour. Observer-refreshed.",
+    },
+    "subtitles.bgopacity": {
+        "status": "live-on-next-cue",
+        "notes": "Background opacity. Observer-refreshed.",
+    },
+    "subtitles.marginvertical": {
+        "status": "live-on-next-cue",
+        "notes": (
+            "Vertical margin. Observer-refreshed. NOTE: source-level comment "
+            "warns that mid-playback changes cause seek artifacts — prefer "
+            "setting at start of playback rather than toggling during."
+        ),
+    },
+    "subtitles.align": {
+        "status": "live-on-next-cue",
+        "notes": "ASS alignment. Observer-refreshed.",
+    },
+    "subtitles.overridefonts": {
+        "status": "live-on-next-cue",
+        "notes": "Whether to override ASS-embedded fonts. Observer-refreshed.",
+    },
+    "subtitles.overridestyles": {
+        "status": "live-on-next-cue",
+        "notes": "Override ASS style enum. Observer-refreshed.",
+    },
+    "subtitles.overrideass": {
+        "status": "live-on-next-cue",
+        "notes": "Whether to apply override flags. Observer-refreshed.",
+    },
+
+    # ------- Subtitles: needs-restart (sampled at stream/codec open) -------
+    "subtitles.pgshdrtosdr": {
+        "status": "needs-restart",
+        "notes": (
+            "Master PGS HDR-to-SDR enable. Sampled at PGS codec open in "
+            "DVDOverlayCodecFFmpeg; mid-playback toggle won't reopen. Set "
+            "globally; tune the brightness/saturation/tonemap/mode params "
+            "per folder instead."
+        ),
+    },
+    "subtitles.charset": {
+        "status": "needs-restart",
+        "notes": "Applied to libass at subtitle-stream Configure(); mid-playback change won't reconfigure.",
+    },
+    "subtitles.parsecaptions": {
+        "status": "needs-restart",
+        "notes": "Sampled during demux setup. Mid-playback toggle won't take effect.",
+    },
+    "locale.subtitlelanguage": {
+        "status": "needs-restart",
+        "notes": "Read at subtitle-stream selection time. Mid-playback change won't reselect the active subtitle track.",
     },
 }
 

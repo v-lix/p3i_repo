@@ -117,11 +117,29 @@ class OverridePlayer(xbmc.Player):
                     "{}: {} is not in the verified-settings table; "
                     "mid-playback effect is not guaranteed".format(source, setting_id)
                 )
-            elif entry.get("status") == "lav-class":
-                util.warn(
-                    "{}: {} is marked lav-class — late writes from onAVStarted "
-                    "may be no-ops until the next codec re-init".format(source, setting_id)
-                )
+            else:
+                status = entry.get("status")
+                if status == "lav-class":
+                    util.warn(
+                        "{}: {} is marked lav-class — late writes from "
+                        "onAVStarted may be no-ops until the next codec "
+                        "re-init".format(source, setting_id)
+                    )
+                elif status == "needs-restart":
+                    util.warn(
+                        "{}: {} is marked needs-restart — value is sampled "
+                        "at stream/codec open; this write will likely affect "
+                        "next playback only, not the current one".format(
+                            source, setting_id
+                        )
+                    )
+                elif status == "live-on-next-cue":
+                    util.debug(
+                        "{}: {} is marked live-on-next-cue — change applies "
+                        "when the next subtitle line is drawn".format(
+                            source, setting_id
+                        )
+                    )
 
             current = util.get_kodi_setting(setting_id)
 

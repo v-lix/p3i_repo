@@ -1,3 +1,17 @@
+v0.1.2
+- Verified-settings table: add all subtitle settings. Two new statuses
+  document timing tiers Kodi's subtitle pipeline actually uses:
+    live-on-next-cue: cached in m_overlayStyle, refreshed by the
+        SubtitlesSettings observer so the next drawn subtitle picks the
+        change up (covers fontname, colorpick, bordersize, shadow*, bg*,
+        marginvertical, align, override*). Applies within one cue.
+    needs-restart: sampled at stream/codec open and never re-read; the
+        addon writes anyway but logs a warning that the change won't
+        affect the current playback (covers pgshdrtosdr enable flag,
+        charset, parsecaptions, locale.subtitlelanguage).
+  PGS HDR-to-SDR shader params (brightness/saturation/tonemap/mode) are
+  fully live — useful for per-folder tuning of HDR subs.
+
 v0.1.1
 - Walk one parent folder so a library-wide override.ini doesn't need to
   be duplicated per subfolder. Standard layouts: episode reaches the

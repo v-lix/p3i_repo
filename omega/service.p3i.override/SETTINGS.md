@@ -168,8 +168,17 @@ Status legend:
   from `onAVStarted` are fine.
 - **live-via-sysfs** — change handler re-pushes the underlying sysfs flag.
   Live after the corresponding C++ patch lands.
+- **live-on-next-cue** — value is cached in a render-time style struct, but
+  an observer fires on settings change and the next drawn subtitle picks
+  it up. Applies within one cue (typically <1s for dense dialogue, longer
+  for sparse subs).
 - **lav-class** — sampled once at codec/stream open and cached. Needs a
   C++ patch before late writes take effect.
+- **needs-restart** — sampled at codec/stream/demuxer open or app startup
+  and never re-read. Mid-playback write may apply to the next playback
+  but not the current one. The addon writes anyway and logs a warning.
+
+### Dolby Vision
 
 | Setting ID | Status | Notes |
 | --- | --- | --- |
@@ -180,7 +189,75 @@ Status legend:
 | `coreelec.amlogic.dolbyvision.std.source.metadata.level5.osdst` | live-via-sysfs | L5 OSD-start signaling. |
 | `coreelec.amlogic.dolbyvision.level5.signal.subs` | live-via-sysfs | L5 subtitle signaling mode (integer). |
 | `coreelec.amlogic.dolbyvision.detect.active.area` | live-via-sysfs | L5 active-area auto-detect. |
+
+### Audio
+
+| Setting ID | Status | Notes |
+| --- | --- | --- |
 | `coreelec.amlogic.dolbyvision.audio.seamlessbranch` | live | LAV SB mode. **Skipped if `service.p3i.sb` is installed** — use that addon instead. Values: `0`=off, `1`=seek-sync, `3`=debug, `4`=LAV SB, `5`=LAV full. |
+
+### Subtitles — PGS HDR-to-SDR shader params
+
+These are read on every PGS bitmap render and fed straight to the GPU
+shader, so per-folder tuning is fully live.
+
+| Setting ID | Status | Notes |
+| --- | --- | --- |
+| `subtitles.pgshdrtosdr.brightness` | live | `m_pqRefNits` shader uniform. |
+| `subtitles.pgshdrtosdr.saturation` | live | `m_pqSaturation` shader uniform. |
+| `subtitles.pgshdrtosdr.tonemap`    | live | Shader tone-mapping pipeline selector. |
+| `subtitles.pgshdrtosdr.mode`       | live | Tonemapping algorithm: Classic / Linear / Luma. |
+| `subtitles.pgshdrtosdr`            | needs-restart | **Master enable**. Sampled at PGS codec open; flipping it mid-playback won't take effect. Set globally and use the per-folder params above for tuning. |
+
+### Subtitles — other live render-time
+
+| Setting ID | Status | Notes |
+| --- | --- | --- |
+| `subtitles.captionsalign`     | live | Per-frame horizontal alignment in `ConvertLibass`. |
+| `subtitles.stereoscopicdepth` | live | Per-frame 3D offset. |
+| `subtitles.bitmapzoom`        | live | Per-frame bitmap scale + GPU texture filter. |
+
+### Subtitles — style (live on next cue)
+
+These are cached in `m_overlayStyle` and refreshed by a settings observer.
+Changes apply when the next subtitle line is drawn — under a second for
+dense dialogue, longer if subtitles are sparse. No C++ patch needed.
+
+| Setting ID | Status | Notes |
+| --- | --- | --- |
+| `subtitles.fontname`         | live-on-next-cue | |
+| `subtitles.fontsize`         | live-on-next-cue | Scaled by `playResY`. |
+| `subtitles.style`            | live-on-next-cue | Bold / italic. |
+| `subtitles.colorpick`        | live-on-next-cue | Font color. |
+| `subtitles.bordersize`       | live-on-next-cue | ASS Outline. |
+| `subtitles.bordercolorpick`  | live-on-next-cue | ASS OutlineColour. |
+| `subtitles.opacity`          | live-on-next-cue | Font opacity. |
+| `subtitles.blur`             | live-on-next-cue | |
+| `subtitles.backgroundtype`   | live-on-next-cue | Outline / box / etc. |
+| `subtitles.shadowcolor`      | live-on-next-cue | ASS BackColour. |
+| `subtitles.shadowopacity`    | live-on-next-cue | |
+| `subtitles.shadowsize`       | live-on-next-cue | ASS Shadow. |
+| `subtitles.bgcolorpick`      | live-on-next-cue | Background color. |
+| `subtitles.bgopacity`        | live-on-next-cue | |
+| `subtitles.marginvertical`   | live-on-next-cue | **NOTE**: source-level comment warns that mid-playback changes cause seek artifacts — prefer setting at the start of playback. |
+| `subtitles.align`            | live-on-next-cue | ASS alignment. |
+| `subtitles.overridefonts`    | live-on-next-cue | Override ASS-embedded fonts. |
+| `subtitles.overridestyles`   | live-on-next-cue | Override ASS style enum. |
+| `subtitles.overrideass`      | live-on-next-cue | Apply override flags. |
+
+### Subtitles — needs-restart
+
+Sampled at stream open. Mid-playback writes don't take effect on the
+current playback; set these globally instead, or accept that the change
+lands on the *next* playback.
+
+| Setting ID | Status | Notes |
+| --- | --- | --- |
+| `subtitles.charset`        | needs-restart | Applied at libass Configure(). |
+| `subtitles.parsecaptions`  | needs-restart | Sampled during demux setup. |
+| `locale.subtitlelanguage`  | needs-restart | Read at subtitle-track selection. |
+
+---
 
 Setting an unverified key isn't blocked, but the warning in the Kodi log
 tells you the timing isn't guaranteed. If you've validated a new key,
