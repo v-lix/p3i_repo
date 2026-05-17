@@ -1,3 +1,8 @@
+v0.1.6
+- Log the actual JSON-RPC response when Settings.SetSettingValue fails,
+  so rejected writes can be diagnosed instead of silently failing with
+  just "failed to set".
+
 v0.1.5
 - Stop deferring to PlexMod4Kodi. The SB helper defers because PM4K
   manages the same LAV SB setting for Plex playback; this addon has no

@@ -84,4 +84,10 @@ def get_kodi_setting(setting_id):
 
 def set_kodi_setting(setting_id, value):
     resp = jsonrpc("Settings.SetSettingValue", {"setting": setting_id, "value": value})
-    return resp.get("result") is True
+    if resp.get("result") is True:
+        return True
+    # Log the actual JSON-RPC response on failure — otherwise diagnosing
+    # SetSettingValue rejections is impossible (the result is just False
+    # with no error info, or there's an error object explaining why).
+    warn("Settings.SetSettingValue({}={!r}) failed: {!r}".format(setting_id, value, resp))
+    return False
