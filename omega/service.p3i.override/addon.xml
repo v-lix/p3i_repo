@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="service.p3i.override" name="p3i Per-Folder Setting Override" version="0.1.3" provider-name="pannal">
+<addon id="service.p3i.override" name="p3i Per-Folder Setting Override" version="0.1.4" provider-name="pannal">
     <requires>
         <import addon="xbmc.python" version="3.0.0"/>
     </requires>
     <extension point="xbmc.service" library="service.py"/>
     <extension point="xbmc.addon.metadata">
         <summary lang="en_GB">Per-folder Kodi setting overrides via override.ini.</summary>
-        <description lang="en_GB">Opt-in service addon for the p3i CoreELEC build. When a video plays, looks for an "override.ini" file in the same folder and applies the listed Kodi setting overrides at AV-start; restores the previous values on stop. Format is one "kodi.setting.id = value" per line. Defers automatically when PlexMod4Kodi (script.plexmod) is running. If service.p3i.sb is installed it owns coreelec.amlogic.dolbyvision.audio.seamlessbranch and override.ini entries for that key are skipped to avoid a write race.</description>
+        <description lang="en_GB">Opt-in service addon for the p3i CoreELEC build. Reads "override.ini" from the playing file's folder and one parent folder, applies any Kodi setting overrides listed there at AV-start, and restores the previous values on stop. INI format: bare "kodi.setting.id = value" lines, or [global] and [filename or glob] sections that cover flat libraries and TV season folders without scattering files. Cascade is broadest-first, narrower wins. Ships with a verified-settings catalog covering Dolby Vision dynamic knobs (CMv4.0 append, L5 active-area override and enable surfaces), LAV seamless-branching mode, and the subtitle pipeline (PGS HDR-to-SDR shader tonemap params, style, render-time settings) — entries outside the catalog still write, but log a warning that mid-playback effect isn't guaranteed. Defers entirely when PlexMod4Kodi (script.plexmod) is the active session. If service.p3i.sb is installed, override.ini entries for the LAV seamless-branching key are skipped — that addon owns the key.</description>
         <platform>linux</platform>
         <license>GPL-2.0-or-later</license>
         <source>https://github.com/pannal/p3i_repo</source>

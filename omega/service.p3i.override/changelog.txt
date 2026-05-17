@@ -1,3 +1,9 @@
+v0.1.4
+- addon.xml description: bring up to date with the walk + INI sections
+  (was describing a flat per-folder model with no sections) and call
+  out the verified-settings catalog so users know what's covered
+  without opening SETTINGS.md.
+
 v0.1.3
 - Icon: replace the SB-helper-cloned placeholder with a distinct gear
   glyph (cyan on navy rounded square, matches the p3i family look).
