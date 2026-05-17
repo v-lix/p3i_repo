@@ -53,9 +53,11 @@ VERIFIED = {
         "notes": (
             "L5 active-area override. Substituted into doviFrame/StreamMetadata "
             "during RPU parse so the overlay-active-area calc uses these offsets "
-            "instead of the stream's. NOTE: this affects Kodi-side overlay and "
-            "DataCacheCore consumers only — the emitted RPU still carries the "
-            "stream's original L5, so the TV's tonemapping sees the original values."
+            "instead of the stream's. When set, also stops the active-area auto-"
+            "detect path (would just burn background cycles, since CalcOverlayActiveArea "
+            "picks override over detect). NOTE: this affects Kodi-side overlay "
+            "and DataCacheCore consumers only — the emitted RPU still carries "
+            "the stream's original L5, so the TV's tonemapping sees the original values."
         ),
     },
 

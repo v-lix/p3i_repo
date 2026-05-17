@@ -187,7 +187,7 @@ Status legend:
 | Setting ID | Status | Notes |
 | --- | --- | --- |
 | `coreelec.amlogic.dolbyvision.cmv40.append` | live | Atomic-cached in `CDVDVideoCodecAmlogic`, applied per-packet from `AddData()`. Values: `0`=off, `1`=CMv2.9-without-L2-trims, `2`=always. |
-| `coreelec.amlogic.dolbyvision.level5.override` | live | L5 active-area override string `"top,bottom,left,right"` (RPU active-area space) or empty. Substituted into `doviFrame/StreamMetadata` during RPU parse. Affects Kodi-side overlay-active-area calc only — the emitted RPU still carries the stream's original L5. |
+| `coreelec.amlogic.dolbyvision.level5.override` | live | L5 active-area override string `"top,bottom,left,right"` (RPU active-area space) or empty. Substituted into `doviFrame/StreamMetadata` during RPU parse. When set, also short-circuits the L5 auto-detect path (override wins anyway). Affects Kodi-side overlay-active-area calc only — the emitted RPU still carries the stream's original L5. |
 | `coreelec.amlogic.dolbyvision.level5` | live-via-sysfs | Master L5 enable. `aml_dv_apply_l5_sysfs()` re-pushed on change. |
 | `coreelec.amlogic.dolbyvision.std.source.metadata.level5` | live-via-sysfs | Forward source L5 metadata. |
 | `coreelec.amlogic.dolbyvision.std.source.metadata.level5.osdst` | live-via-sysfs | L5 OSD-start signaling. |
