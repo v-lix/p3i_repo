@@ -1,0 +1,11 @@
+v0.1.0
+- Initial release.
+- Per-folder Kodi setting overrides via override.ini in the playing file's
+  folder. Format: optional [global] section + [filename or glob] sections;
+  later/narrower sections override broader ones for the same key.
+- Save/restore lifecycle: saved at AV-start, pushed back on stop/end/error.
+- Defers to PlexMod4Kodi (script.plexmod) when it is the active session.
+- Skips coreelec.amlogic.dolbyvision.audio.seamlessbranch when
+  service.p3i.sb is installed (SB helper owns that key).
+- Verified-settings table documents which settings are known to take effect
+  mid-playback; warnings emitted for everything outside the table.
