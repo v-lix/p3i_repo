@@ -1,3 +1,10 @@
+v0.1.1
+- Walk one parent folder so a library-wide override.ini doesn't need to
+  be duplicated per subfolder. Standard layouts: episode reaches the
+  show folder, movie in per-title subfolder reaches the library root.
+  Broadest folder applies first, narrower folder overrides per key —
+  same model as INI sections inside a single file.
+
 v0.1.0
 - Initial release.
 - Per-folder Kodi setting overrides via override.ini in the playing file's

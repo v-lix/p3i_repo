@@ -2,9 +2,21 @@
 """
 Per-folder Kodi setting overrides for service.p3i.override.
 
-When a video plays, this module looks for "override.ini" in the same folder
-as the playing file (no parent walking — drop one override.ini per folder
-that needs it, including season folders for TV).
+When a video plays, this module looks for "override.ini" in the playing
+file's folder *and* one parent folder, so a library-wide tweak doesn't
+need a copy in every subfolder. For the standard layouts this covers:
+
+  - Movie in per-title subfolder: /Movies/Title/movie.mkv
+      → file folder (per-title) + 1 parent (Movies library)
+  - Movie in flat library: /Movies/title.mkv
+      → file folder (Movies library) + 1 parent (whatever's above —
+        usually no override.ini there, harmless)
+  - TV episode: /TV/Show/Season 01/episode.mkv
+      → file folder (season) + 1 parent (show)
+
+Cascade is broadest-first: the parent folder's override.ini applies first,
+then the file folder's, with narrower overriding broader per key. Same
+precedence model as INI sections inside a single file.
 
 File format
 -----------
@@ -76,26 +88,51 @@ def local_folder_and_basename(playing_file):
     return folder, basename
 
 
-def load_override_for(playing_file):
-    """Return (merged_dict, source_path or None). Empty dict means no override
-    applied to this file."""
-    folder, basename = local_folder_and_basename(playing_file)
+def _walk_folders(folder):
+    """Return [broadest, ..., narrowest] candidate folders — file folder plus
+    one parent. Stops at the filesystem root."""
+    candidates = [folder]
+    parent = os.path.dirname(folder)
+    if parent and parent != folder:
+        candidates.append(parent)
+    return list(reversed(candidates))
+
+
+def find_override_files(playing_file):
+    """Existing override.ini paths along the cascade, broadest first."""
+    folder, _ = local_folder_and_basename(playing_file)
     if not folder:
-        return {}, None
-    path = os.path.join(folder, OVERRIDE_FILENAME)
-    if not xbmcvfs.exists(path):
-        return {}, None
+        return []
+    paths = []
+    for f in _walk_folders(folder):
+        candidate = os.path.join(f, OVERRIDE_FILENAME)
+        if xbmcvfs.exists(candidate):
+            paths.append(candidate)
+    return paths
 
-    raw = _read_text(path)
-    if raw is None:
-        return {}, path
 
-    parsed = _parse(raw, path)
-    if parsed is None:
-        return {}, path
+def load_override_for(playing_file):
+    """Return (merged_dict, [source_paths]). Empty dict means nothing applies
+    to this file. Source paths are returned broadest-first, matching the
+    apply order."""
+    _, basename = local_folder_and_basename(playing_file)
+    if not basename:
+        return {}, []
 
-    merged = _merge_for_file(parsed, basename, path)
-    return merged, path
+    paths = find_override_files(playing_file)
+    if not paths:
+        return {}, []
+
+    merged = {}
+    for path in paths:
+        raw = _read_text(path)
+        if raw is None:
+            continue
+        parsed = _parse(raw, path)
+        if parsed is None:
+            continue
+        merged.update(_merge_for_file(parsed, basename, path))
+    return merged, paths
 
 
 def coerce_value(setting_id, raw_value):

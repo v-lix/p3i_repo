@@ -3,12 +3,27 @@
 `service.p3i.override` watches for playback and applies per-folder Kodi
 setting overrides from an `override.ini` file next to the playing file.
 
-## File location
+## File location and walk
 
-One `override.ini` per folder, in the **same folder as the playing file**.
-No parent walking — for TV that's typically the season folder; for movies
-it's either the per-movie folder or a shared movies folder (use sections in
-the latter case).
+`override.ini` is read from the playing file's folder **and** one parent
+folder, so a library-wide tweak doesn't need a copy in every subfolder.
+Standard layouts:
+
+| Layout | File folder | Parent (also walked) |
+| --- | --- | --- |
+| Movie in per-title subfolder | `/Movies/Title/` | `/Movies/` |
+| Movie in flat library        | `/Movies/`      | (root — usually no `override.ini` there) |
+| TV episode                   | `/TV/Show/Season 01/` | `/TV/Show/` |
+
+Cascade is **broadest-first**: the parent folder's `override.ini` applies
+first, then the file folder's, with narrower overriding broader per key.
+Same precedence model as `[<filename>]` sections inside a single file —
+outermost sets the default, innermost wins the override.
+
+For per-episode-subfolder layouts (`/TV/Show/Season 01/S01E03/episode.mkv`),
+the walk reaches the season folder but not the show folder; put that level
+of override.ini at the season folder instead, or skip the per-episode
+subfolders.
 
 ## File format
 

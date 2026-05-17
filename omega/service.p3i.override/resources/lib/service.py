@@ -42,6 +42,7 @@ class OverridePlayer(xbmc.Player):
         except RuntimeError:
             return None
 
+
     # ---- event handlers ---------------------------------------------------
 
     def onAVStarted(self):
@@ -72,16 +73,23 @@ class OverridePlayer(xbmc.Player):
         if not path:
             return
 
-        plan, source = override.load_override_for(path)
+        plan, sources = override.load_override_for(path)
         if not plan:
             return
+
+        # source label for logs — list of files broadest-first, or just the
+        # one path if only one file in the cascade had anything to say.
+        if len(sources) == 1:
+            source_label = sources[0]
+        else:
+            source_label = "[" + ", ".join(sources) + "]"
 
         # Drop SB setting key if the SB helper owns it. Two writers on the
         # same setting around the same playback event would race.
         if util.SB_SETTING_ID in plan and util.sb_helper_installed():
             util.log(
                 "{}: dropping {} — {} is installed and owns this key".format(
-                    source, util.SB_SETTING_ID, util.SB_HELPER_ADDON_ID
+                    source_label, util.SB_SETTING_ID, util.SB_HELPER_ADDON_ID
                 )
             )
             plan = {k: v for k, v in plan.items() if k != util.SB_SETTING_ID}
@@ -89,7 +97,7 @@ class OverridePlayer(xbmc.Player):
         if not plan:
             return
 
-        self._apply(plan, source)
+        self._apply(plan, source_label)
 
     def _apply(self, plan, source):
         applied = 0
