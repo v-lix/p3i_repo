@@ -7,6 +7,7 @@ the curated SB list, and whose audio is TrueHD or (likely) tms EAC3, set the
 CoreELEC LAV seamless-branching mode. Restore the previous mode on stop / end /
 error. Defers to PM4K when script.plex.running == '1' on Window 10000.
 """
+import fnmatch
 import os
 
 import xbmc
@@ -193,6 +194,14 @@ class SBPlayer(xbmc.Player):
         self._apply(self._configured_mode())
 
     def _has_sb_marker(self):
+        """Marker semantics:
+        - Empty / whitespace-only file: engage for every file in the folder
+          (original behavior — preserves existing user setups).
+        - Non-empty: each non-blank/non-comment line is a filename or fnmatch
+          glob; engage only when the playing file's basename matches at least
+          one entry. Lets a flat-library user enable SB for individual titles
+          without per-folder marker scattering.
+        """
         try:
             path = self.getPlayingFile()
         except RuntimeError:
@@ -205,10 +214,51 @@ class SBPlayer(xbmc.Player):
         folder = os.path.dirname(path)
         if not folder:
             return False
+        basename = os.path.basename(path)
         for marker in SB_MARKER_FILES:
-            if xbmcvfs.exists(os.path.join(folder, marker)):
+            marker_path = os.path.join(folder, marker)
+            if not xbmcvfs.exists(marker_path):
+                continue
+            patterns = self._read_marker_patterns(marker_path)
+            if patterns is None:
+                # Empty / unreadable / no entries → whole-folder engage.
                 return True
+            if any(fnmatch.fnmatchcase(basename, p) for p in patterns):
+                util.debug("SB marker {} matched {}".format(marker_path, basename))
+                return True
+            util.debug("SB marker {} present but no entry matched {}".format(
+                marker_path, basename))
         return False
+
+    def _read_marker_patterns(self, marker_path):
+        """Returns the list of patterns from the marker file, or None if the
+        file is empty / unreadable / contains nothing but blanks and comments
+        (in which case the caller treats marker presence as whole-folder)."""
+        try:
+            f = xbmcvfs.File(marker_path)
+            try:
+                data = f.read()
+            finally:
+                f.close()
+        except Exception as exc:
+            util.warn("SB marker {} unreadable: {}".format(marker_path, exc))
+            return None
+        if isinstance(data, bytes):
+            try:
+                data = data.decode("utf-8")
+            except UnicodeDecodeError:
+                util.warn("SB marker {} not UTF-8, treating as whole-folder".format(
+                    marker_path))
+                return None
+        if not data or not data.strip():
+            return None
+        patterns = []
+        for line in data.splitlines():
+            s = line.strip()
+            if not s or s[0] in ("#", ";"):
+                continue
+            patterns.append(s)
+        return patterns or None
 
     def onPlayBackStopped(self):
         self._restore()

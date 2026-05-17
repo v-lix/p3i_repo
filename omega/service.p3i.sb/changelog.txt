@@ -1,3 +1,11 @@
+v0.1.6
+- SB/SB.txt marker can now list filenames or fnmatch globs (one per line,
+  '#' and ';' comments allowed). When the marker is non-empty, SB only
+  engages for files whose basename matches at least one entry. Empty
+  markers preserve the existing whole-folder behavior, so no upgrade
+  action is needed for existing users. Useful for flat libraries where
+  multiple titles share a folder and you only want SB for some of them.
+
 v0.1.5
 - Fix: codec gate now accepts Atmos/JOC variants. VideoPlayer.AudioCodec
   returns names like "truehd_atmos" / "eac3_atmos" / "eac3_joc" for
