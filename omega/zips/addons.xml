@@ -37,6 +37,33 @@
     </extension>
 </addon>
 
+<addon id="script.embuary.helper" name="Embuary Helper" version="2.0.8-p3i.1" provider-name="sualfred">
+    <requires>
+        <import addon="xbmc.python" version="3.0.0"/>
+        <import addon="script.module.pil" version="1.1.7"/>
+    </requires>
+    <extension point="xbmc.python.script" library="default.py">
+        <provides>executable</provides>
+    </extension>
+    <extension point="xbmc.python.pluginsource" library="plugin.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.service" library="service.py" />
+    <extension point="xbmc.addon.metadata">
+        <summary lang="en_GB">Embuary Helper Script</summary>
+        <description lang="en_GB">Helper script to provide features and functions to the Embuary skin. A full documentation can be found on GitHub: https://github.com/sualfred/script.embuary.helper/wiki</description>
+        <platform>all</platform>
+        <news>v2.0.8-p3i.1: Skip the background fanart grabber and PIL blur while anything is playing (they ran synchronously on the service thread every ~200s and caused microstutters on constrained boxes). Gated on isPlaying so pauses/seeks cannot let it slip through and hitch playback on resume.</news>
+        <license>GPL-2.0-only</license>
+        <forum>https://forum.kodi.tv/showthread.php?tid=345318</forum>
+        <source>https://github.com/sualfred/script.embuary.helper</source>
+        <assets>
+            <icon>resources/icon.png</icon>
+            <fanart>resources/fanart.jpg</fanart>
+        </assets>
+    </extension>
+</addon>
+
 <addon id="inputstream.ffmpegdirect" version="22.2.5.1" name="Inputstream FFmpeg Direct" provider-name="Ross Nicholson">
   <requires>
     <import addon="kodi.binary.global.main" minversion="2.0.0" version="2.0.2"/>
