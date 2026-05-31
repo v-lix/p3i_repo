@@ -88,21 +88,19 @@ class Service(xbmc.Monitor):
         service_interval = float(service_interval)
         background_interval = xbmc.getInfoLabel('Skin.String(BackgroundInterval)') or ADDON.getSetting('background_interval')
         background_interval = int(background_interval)
+        background_interval_count = background_interval
         widget_refresh = 0
         get_backgrounds = 200
 
         while not self.abortRequested() and not self.restart:
 
-            ''' Only run timed tasks if screensaver is inactive to avoid keeping NAS/servers awake
-            '''
-            ''' p3i: also skip the timed background tasks while anything is playing. grabfanart()
-                fires several JSON-RPC library DB queries synchronously on this service thread,
-                and ImageBlur() runs a PIL blur - both briefly starve the video render thread on
-                constrained boxes and cause microstutters. The Embuary backgrounds these feed are
-                not visible during fullscreen playback anyway. Gated on isPlaying (not
-                isPlayingVideo) so a brief pause or a seek/mode-switch transient - where
-                isPlayingVideo can momentarily read false - cannot let the grabber slip through
-                and hitch playback on resume.
+            ''' Only run timed tasks if screensaver is inactive to avoid keeping NAS/servers awake.
+                Also skip them while something is playing: grabfanart() issues several synchronous
+                JSON-RPC library queries (and ImageBlur() runs a PIL blur) on this service thread,
+                which can briefly starve the video render thread and cause microstutters on weaker
+                devices. The backgrounds these feed are not visible during fullscreen playback
+                anyway. Gated on isPlaying() rather than isPlayingVideo() so a brief pause or seek
+                cannot let the grabber slip through and hitch playback on resume.
             '''
             if not self.screensaver and not xbmc.Player().isPlaying():
 
@@ -118,7 +116,7 @@ class Service(xbmc.Monitor):
 
                 ''' Set background properties
                 '''
-                if background_interval >= 10:
+                if background_interval_count >= background_interval:
                     if arts.get('all'):
                         self.setfanart('EmbuaryBackground', arts['all'])
                     if arts.get('videos'):
@@ -134,10 +132,10 @@ class Service(xbmc.Monitor):
                     if arts.get('artists'):
                         self.setfanart('EmbuaryBackgroundMusic', arts['artists'])
 
-                    background_interval = 0
+                    background_interval_count = 0
 
                 else:
-                    background_interval += service_interval
+                    background_interval_count += service_interval
 
                 ''' Blur backgrounds
                 '''
