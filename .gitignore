@@ -1,7 +1,7 @@
 .idea
 .gitattributes
 */**/.gitignore
-*/skin.*/media
+*/skin.*/media/*
 !*/skin.*/media/*.xbt
 __pycache__/
 *.pyc
