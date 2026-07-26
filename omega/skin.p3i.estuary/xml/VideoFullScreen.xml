@@ -73,12 +73,15 @@
 				<font>font13</font>
 			</control>
 		</control>
-		<control type="group" id="2">
+		<control type="group" id="888">
 			<depth>DepthOSD+</depth>
-			<visible>[String.IsEqual(Player.Process(av.change),1) + !String.IsEqual(VideoPlayer.VideoCodec,av1) + !Skin.HasSetting(osd.hidecodecstartuplogos)] | [Skin.HasSetting(osd.codeclogospreview) + !String.IsEqual(VideoPlayer.VideoCodec,av1)]</visible>
-			<visible>true</visible>
+			<visible>Skin.TimerIsRunning(codeclogos) + !String.IsEqual(VideoPlayer.VideoCodec,av1)</visible>
+			<animation type="Visible" condition="!Skin.HasSetting(osd.nocodeclogosentryanimation)">
+				<effect type="slide" start="0,-80" end="0,0" delay="2000" time="320" tween="back"/>
+				<effect type="fade" start="0" end="100" delay="2000" time="180" tween="linear"/>
+			</animation>
 			<animation type="Hidden">
-				<effect type="fade" start="100" end="0" time="500" tween="sine"/>
+				<effect type="fade" start="100" end="0" time="50" tween="linear"/>
 			</animation>
 			<!-- Codec Logo position L/C/R. Right & center offsets differ by orientation: the vertical stack (144w) is narrower than the horizontal pair (308w). Margin 30, screen 1920. -->
 			<animation effect="slide" end="-776,0" time="0" condition="!Skin.HasSetting(osd.usecenterCodecLogos) + !Skin.HasSetting(osd.userightCodecLogos)">Conditional</animation>
@@ -227,12 +230,15 @@
 				<param name="texture">dtshd_ma_x_imax.png</param>
 			</include>
 		</control>
-		<control type="group" id="21">
+		<control type="group" id="777">
 			<depth>DepthOSD+</depth>
-			<visible>[String.IsEqual(Player.Process(av.change),1) + String.IsEqual(VideoPlayer.VideoCodec,av1) + !Skin.HasSetting(osd.hidecodecstartuplogos)] | [Skin.HasSetting(osd.codeclogospreview) + String.IsEqual(VideoPlayer.VideoCodec,av1)]</visible>
-			<visible>true</visible>
+			<visible>Skin.TimerIsRunning(codeclogos) + String.IsEqual(VideoPlayer.VideoCodec,av1)</visible>
+			<animation type="Visible" condition="!Skin.HasSetting(osd.nocodeclogosentryanimation)">
+				<effect type="slide" start="0,-80" end="0,0" delay="2000" time="320" tween="back"/>
+				<effect type="fade" start="0" end="100" delay="2000" time="180" tween="linear"/>
+			</animation>
 			<animation type="Hidden">
-				<effect type="fade" start="100" end="0" time="500" tween="sine"/>
+				<effect type="fade" start="100" end="0" time="50" tween="linear"/>
 			</animation>
 			<!-- Codec Logo position L/C/R. Right & center offsets differ by orientation: the vertical stack (144w) is narrower than the horizontal pair (308w). Margin 30, screen 1920. -->
 			<animation effect="slide" end="-776,0" time="0" condition="!Skin.HasSetting(osd.usecenterCodecLogos) + !Skin.HasSetting(osd.userightCodecLogos)">Conditional</animation>
@@ -247,14 +253,14 @@
 			<include content="VideoCodecFlag">
 				<param name="groupId">40</param><param name="imageId">41</param>
 				<param name="visible">[String.IsEqual(VideoPlayer.VideoCodec,av1) + String.IsEmpty(VideoPlayer.HdrType)] + ![String.Contains(Player.Process(amlogic.vs10.mode),hdr10) | String.Contains(Player.Process(amlogic.vs10.mode),Dolby Vision)]</param>
-				<param name="visible">![String.IsEqual(VideoPlayer.VideoCodec,av1) + String.Contains(VideoPlayer.HdrType,hdr10) + [String.Contains(Player.Process(amlogic.vs10.mode),hdr10) | String.Contains(Player.Process(amlogic.vs10.mode),dolby vision)]</param>
+				<param name="visible">![String.IsEqual(VideoPlayer.VideoCodec,av1) + String.Contains(VideoPlayer.HdrType,hdr10)] + [String.Contains(Player.Process(amlogic.vs10.mode),hdr10) | String.Contains(Player.Process(amlogic.vs10.mode),dolby vision)]</param>
 				<param name="visible">Integer.IsEqual(Player.Process(video.source.hdr.type.raw),0) + !String.IsEqual(Player.Process(video.bit.depth),10) + String.IsEqual(Player.Process(amlogic.vs10.mode),Bypass)</param>
 				<param name="texture">sdr8.png</param>
 			</include>
 			<include content="VideoCodecFlag">
 				<param name="groupId">42</param><param name="imageId">43</param>
 				<param name="visible">[String.IsEqual(VideoPlayer.VideoCodec,av1) + String.IsEmpty(VideoPlayer.HdrType)] + ![String.Contains(Player.Process(amlogic.vs10.mode),hdr10) | String.Contains(Player.Process(amlogic.vs10.mode),Dolby Vision)]</param>
-				<param name="visible">![String.IsEqual(VideoPlayer.VideoCodec,av1) + String.Contains(VideoPlayer.HdrType,hdr10) + [String.Contains(Player.Process(amlogic.vs10.mode),hdr10) | String.Contains(Player.Process(amlogic.vs10.mode),dolby vision)]</param>
+				<param name="visible">![String.IsEqual(VideoPlayer.VideoCodec,av1) + String.Contains(VideoPlayer.HdrType,hdr10)] + [String.Contains(Player.Process(amlogic.vs10.mode),hdr10) | String.Contains(Player.Process(amlogic.vs10.mode),dolby vision)]</param>
 				<param name="visible">Integer.IsEqual(Player.Process(video.source.hdr.type.raw),0) + String.IsEqual(Player.Process(video.bit.depth),10) + String.IsEqual(Player.Process(amlogic.vs10.mode),Bypass)</param>
 				<param name="texture">sdr10.png</param>
 			</include>
