@@ -81,11 +81,25 @@
 					<onclick>Skin.ToggleSetting(osd.hidecodecstartuplogos)</onclick>
 					<selected>!Skin.HasSetting(osd.hidecodecstartuplogos)</selected>
 				</control>
+				<control type="button" id="637">
+					<label>- $LOCALIZE[31676]</label>
+					<label2>$VAR[CodecLogoDurationLabelVar]</label2>
+					<include>DefaultSettingButton</include>
+					<onclick>Skin.SetNumeric(osd.codeclogoduration)</onclick>
+					<enable>!Skin.HasSetting(osd.hidecodecstartuplogos)</enable>
+				</control>
 				<control type="button" id="628">
 					<label>- $LOCALIZE[31668]</label>
 					<label2>$VAR[CodecLogoPositionLabel2Var]</label2>
 					<include>DefaultSettingButton</include>
 					<onclick>Skin.SelectBool(31668, 31665|osd.useleftCodecLogos, 31666|osd.usecenterCodecLogos, 31667|osd.userightCodecLogos)</onclick>
+					<enable>!Skin.HasSetting(osd.hidecodecstartuplogos)</enable>
+				</control>
+				<control type="radiobutton" id="638">
+					<label>- $LOCALIZE[31678]</label>
+					<include>DefaultSettingButton</include>
+					<onclick>Skin.ToggleSetting(osd.nocodeclogosentryanimation)</onclick>
+					<selected>!Skin.HasSetting(osd.nocodeclogosentryanimation)</selected>
 					<enable>!Skin.HasSetting(osd.hidecodecstartuplogos)</enable>
 				</control>
 				<control type="radiobutton" id="633">
