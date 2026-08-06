@@ -137,6 +137,23 @@ VERIFIED = {
         ),
     },
 
+    # ------- Audio: output configuration -------
+    "audiooutput.channels": {
+        "status": "live",
+        "type": "int",
+        "values": "1=2.0, 2=2.1, 3=3.0, 4=3.1, 5=4.0, 6=4.1, 7=5.0, 8=5.1, 9=7.0, 10=7.1",
+        "notes": (
+            "Speaker/PCM output channel layout. A mid-playback write triggers "
+            "a full audio engine sink+buffer reconfigure (brief audio "
+            "interruption) - upstream mechanism, no T4c requirement. Only "
+            "affects decoded/PCM output; ignored while a passthrough stream "
+            "is bitstreaming. Reducing it engages the downmix path, so the "
+            "boostcenter/lfemixto/mixsublevel settings apply on top. "
+            "Visible-dependency: hidden (InvalidParams) when the audio "
+            "device is optical/SPDIF (IEC958), which is always 2.0."
+        ),
+    },
+
     # ------- Audio: downmix / resampler (RECONFIGURE + resampler recreate) -------
     "audiooutput.maintainoriginalvolume": {
         "status": "live",

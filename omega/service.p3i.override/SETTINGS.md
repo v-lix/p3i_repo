@@ -217,6 +217,7 @@ Status legend:
 | `coreelec.amlogic.dolbyvision.audio.seamlessbranch` | live | LAV SB mode. **Skipped if `service.p3i.sb` is installed** — use that addon instead. Values: `0`=off, `1`=seek-sync, `3`=debug, `4`=LAV SB, `5`=LAV full. |
 | `audiooutput.drc` | live-on-seek | AC3/E-AC3 dynamic range compression, `0`–`100` (%). Applied at codec open and re-applied on every `Reset()` — takes effect on the first seek after the write. `advancedsettings.xml` `<applydrc>` wins when set. |
 | `audiooutput.ignoredownmixmetadata` | live | Read per-frame when the stream carries downmix side data. Per-title escape hatch for broken downmix metadata. |
+| `audiooutput.channels` | live | Speaker/PCM output layout: `1`=2.0, `2`=2.1, `3`=3.0, `4`=3.1, `5`=4.0, `6`=4.1, `7`=5.0, `8`=5.1, `9`=7.0, `10`=7.1. Mid-playback write does a full sink reconfigure (brief audio drop); works on any build. PCM/decoded output only — ignored while bitstreaming. Reducing it engages the downmix path (boostcenter/lfemixto/mixsublevel apply). Hidden on optical/SPDIF devices. |
 
 ### Audio — downmix / resampler
 
