@@ -23,6 +23,9 @@ codec/stream open. The :status: field documents what we know:
                        drawn subtitle picks it up. Applies within one cue
                        (typically <1s for dense dialogue, longer for sparse
                        subs). Useful in practice; not instant.
+  "live-on-seek"     — Value is applied at codec open AND on every codec
+                       Reset() (seek/flush). A write from onAVStarted lands
+                       on the first seek, not instantly.
   "lav-class"        — Sampled once at codec/stream open and cached. Needs a
                        C++ patch (see xbmc commit 72daca6f5a for the LAV
                        pattern) before late writes take effect.
@@ -109,6 +112,133 @@ VERIFIED = {
             "and reacts to OnSettingChanged. NOTE: if service.p3i.sb is "
             "installed, override.ini writes to this key are skipped (SB helper "
             "owns the key)."
+        ),
+    },
+
+    # ------- Audio: decode-side -------
+    "audiooutput.drc": {
+        "status": "live-on-seek",
+        "type": "int",
+        "values": "0-100 (percent; drc_scale 0.0-1.0)",
+        "notes": (
+            "AC3/E-AC3 dynamic range compression. Read in ApplyDrcScale(), "
+            "called at codec open and on every Reset() (seek/flush) - a "
+            "mid-playback write takes effect on the first seek. "
+            "advancedsettings.xml <applydrc> overrides the slider when set."
+        ),
+    },
+    "audiooutput.ignoredownmixmetadata": {
+        "status": "live",
+        "type": "bool",
+        "notes": (
+            "Read per-frame in CDVDAudioCodecFFmpeg::GetData when downmix "
+            "side data is present. Per-title escape hatch for streams with "
+            "broken downmix metadata."
+        ),
+    },
+
+    # ------- Audio: downmix / resampler (RECONFIGURE + resampler recreate) -------
+    "audiooutput.maintainoriginalvolume": {
+        "status": "live",
+        "type": "bool",
+        "notes": (
+            "Flips downmix normalization; ActiveAE RECONFIGURE recreates the "
+            "resampler. Only matters when downmixing to fewer channels."
+        ),
+    },
+    "audiooutput.boostcenter": {
+        "status": "live",
+        "type": "float",
+        "values": "0.0 = off; dB of centre boost otherwise",
+        "notes": (
+            "Centre-channel boost folded into the downmix matrix. Live since "
+            "the T4 ConfigureResampler change-detect patch (recreates the "
+            "resampler on change); before that build it was sampled at "
+            "stream open only."
+        ),
+    },
+    "audiooutput.lfemixto": {
+        "status": "live",
+        "type": "int",
+        "values": "0=LFE dropped/default, 1=redirect LFE to front L/R",
+        "notes": (
+            "LFE downmix routing; needs audiooutput.mixsublevel > 0 to have "
+            "any effect. Live since the T4 ConfigureResampler change-detect "
+            "patch."
+        ),
+    },
+    "audiooutput.mixsublevel": {
+        "status": "live",
+        "type": "int",
+        "values": "0-100 (percent LFE level in downmix)",
+        "notes": "LFE level in the downmix matrix. Live since the T4 ConfigureResampler change-detect patch.",
+    },
+    "audiooutput.stereoupmix": {
+        "status": "live",
+        "type": "bool",
+        "notes": (
+            "2.0 -> multichannel upmix. Live since the T4 ConfigureResampler "
+            "change-detect patch. Visible-dependency: only writable when the "
+            "sink offers >2 channels."
+        ),
+    },
+
+    # ------- Audio: passthrough codec toggles (live codec re-selection) -------
+    # All of these are made live by the T4 VideoPlayerAudio settings-callback
+    # patch: a change flags the player thread, which re-runs
+    # SwitchCodecIfNeeded() with live setting reads (SupportsRaw). Expect a
+    # short audio drop while the codec switches.
+    # VISIBILITY: all format toggles are dependency-hidden unless master
+    # audiooutput.passthrough is enabled AND the passthrough device supports
+    # the format - writes to hidden settings fail with InvalidParams (logged).
+    "audiooutput.ac3passthrough": {
+        "status": "live",
+        "type": "bool",
+        "notes": "Live codec re-selection via SwitchCodecIfNeeded.",
+    },
+    "audiooutput.eac3passthrough": {
+        "status": "live",
+        "type": "bool",
+        "notes": "Live codec re-selection via SwitchCodecIfNeeded.",
+    },
+    "audiooutput.dtspassthrough": {
+        "status": "live",
+        "type": "bool",
+        "notes": "Covers plain DTS and the DTS-HD core fallback path.",
+    },
+    "audiooutput.dtshdpassthrough": {
+        "status": "live",
+        "type": "bool",
+        "notes": (
+            "DTS-HD HRA/MA passthrough. Per-title 'core only for this one' "
+            "combos with audiooutput.dtshdcorefallback."
+        ),
+    },
+    "audiooutput.truehdpassthrough": {
+        "status": "live",
+        "type": "bool",
+        "notes": (
+            "Per-title 'decode TrueHD instead of bitstreaming' - e.g. for "
+            "titles whose TrueHD passthrough overloads the receiver."
+        ),
+    },
+    "audiooutput.ac3transcode": {
+        "status": "live",
+        "type": "bool",
+        "notes": (
+            "Transcode multichannel PCM to AC3. Codec choice reacts live; "
+            "the AE-side transcode decision lands with the engine "
+            "RECONFIGURE a moment later."
+        ),
+    },
+    "audiooutput.dtshdcorefallback": {
+        "status": "live",
+        "type": "bool",
+        "notes": (
+            "Fall back to the DTS core when DTS-HD passthrough is off/"
+            "unsupported. VISIBILITY: dependency-hidden unless "
+            "audiooutput.dtshdpassthrough is FALSE - write that one first "
+            "in the same override.ini if you need both."
         ),
     },
 

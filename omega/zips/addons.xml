@@ -1,67 +1,85 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <addons>
-<addon id="inputstream.adaptive" version="666.21.5.18-p3i.1" name="InputStream Adaptive" provider-name="peak3d, Team Kodi">
+<addon id="service.p3i.sb" name="p3i Seamless Branching Helper" version="0.1.6" provider-name="pannal">
+    <requires>
+        <import addon="xbmc.python" version="3.0.0"/>
+    </requires>
+    <extension point="xbmc.service" library="service.py"/>
+    <extension point="xbmc.addon.metadata">
+        <summary lang="en_GB">Auto-enables the CoreELEC LAV seamless-branching workaround for known SB titles.</summary>
+        <description lang="en_GB">Service addon for the p3i CoreELEC build. When a movie with a known seamless-branching audio issue (TrueHD or tms EAC3) starts playing, this addon toggles the CoreELEC LAV filter mode to avoid audio dropouts, and restores the previous mode on stop. Matches both IMDb and TMDB IDs against a bundled, curated list. Defers automatically when PlexMod4Kodi (script.plexmod) is running, since PM4K handles the same workaround for Plex-sourced playback.</description>
+        <platform>linux</platform>
+        <license>GPL-2.0-or-later</license>
+        <source>https://github.com/pannal/p3i_repo</source>
+        <assets>
+            <icon>resources/icon.png</icon>
+        </assets>
+    </extension>
+</addon>
+
+<addon id="repository.p3i" name="p3i" version="0.1.2" provider-name="pannal">
+    <extension point="xbmc.addon.repository" name="p3i Kodi Repo">
+        <dir minversion="20.90.0">
+            <info compressed="false">https://raw.githubusercontent.com/pannal/p3i_repo/master/omega/zips/addons.xml</info>
+            <checksum>https://raw.githubusercontent.com/pannal/p3i_repo/master/omega/zips/addons.xml.md5</checksum>
+            <datadir zip="true">https://raw.githubusercontent.com/pannal/p3i_repo/master/omega/zips/</datadir>
+        </dir>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <summary>p3i</summary>
+        <description>Binary and Python addons built for the p3i CoreELEC build (aml-4.9-21.3 lineage).</description>
+        <disclaimer></disclaimer>
+        <platform>all</platform>
+        <assets>
+            <icon>icon.png</icon>
+            <fanart>fanart.png</fanart>
+        </assets>
+    </extension>
+</addon>
+
+<addon id="script.module.jurialmunkey" name="jurialmunkey common" provider-name="jurialmunkey" version="0.2.35">
   <requires>
-    <import addon="kodi.binary.global.main" minversion="2.0.0" version="2.0.2"/>
-    <import addon="kodi.binary.global.general" minversion="1.0.4" version="1.0.5"/>
-    <import addon="kodi.binary.global.gui" minversion="5.15.0" version="5.15.0"/>
-    <import addon="kodi.binary.global.filesystem" minversion="1.1.7" version="1.1.9"/>
-    <import addon="kodi.binary.global.tools" minversion="1.0.0" version="1.0.4"/>
-    <import addon="kodi.binary.instance.inputstream" minversion="3.3.0" version="3.3.0"/>
-    <import addon="kodi.binary.instance.videocodec" minversion="2.1.0" version="2.1.0"/>
+    <import addon="xbmc.python" version="3.0.1"/>
+    <import addon="script.module.requests" version="2.9.1"/>
+    <import addon="script.module.infotagger" version="0.0.5" />
   </requires>
-  <extension point="kodi.inputstream" name="adaptive" extension="" tags="true" listitemprops="drm_legacy|license_type|license_key|license_url|license_url_append|license_data|license_flags|manifest_type|server_certificate|manifest_update_parameter|manifest_upd_params|manifest_params|manifest_headers|stream_params|stream_headers|original_audio_language|play_timeshift_buffer|pre_init_data|stream_selection_type|chooser_bandwidth_max|chooser_resolution_max|chooser_resolution_secure_max|live_delay|internal_cookies|config|manifest_config" library_linux="inputstream.adaptive.so.21.5.18"/>
+  <extension point="xbmc.python.module" library="resources/modules" />
   <extension point="xbmc.addon.metadata">
-    <platform/>
-    <license>GPL-2.0-or-later</license>
-    <source>https://github.com/xbmc/inputstream.adaptive</source>
+    <description lang="en_GB">Common code required by TMDbHelper and other related jurialmunkey add-ons</description>
+    <description lang="zh_CN">TMDb 助手及其他相关 jurialmunkey 插件所需的通用代码</description>
+    <license>GPL-3.0-or-later</license>
+    <website>https://github.com/jurialmunkey/script.module.jurialmunkey</website>
     <assets>
-      <icon>resources/icon.png</icon>
-      <fanart>resources/fanart.jpg</fanart>
+      <icon>icon.png</icon>
     </assets>
-    <summary lang="ca_ES">Client InputStream per a transmissions adaptatives</summary>
-    <summary lang="cs_CZ">Klient adaptivních toků protokolu InputStream</summary>
-    <summary lang="da_DK">InputStream-klient til adaptive streams</summary>
-    <summary lang="de_DE">InputStream-Client für adaptive Streams</summary>
-    <summary lang="en_GB">InputStream client for adaptive streams</summary>
-    <summary lang="es_ES">Cliente InputStream para transmisiones adaptativas</summary>
-    <summary lang="es_MX">Cliente InputStream para transmisiones adaptativas</summary>
-    <summary lang="et_EE">InputStream klient kohanduvate voogude jaoks</summary>
-    <summary lang="fi_FI">InputStream-asiakas mukautuville mediavirroille</summary>
-    <summary lang="fr_FR">Client InputStream pour les flux adaptatifs</summary>
-    <summary lang="he_IL">לקוח InputStream לתזרימים מסתגלים</summary>
-    <summary lang="hr_HR">InputStream klijent za prilagodljiva strujanja</summary>
-    <summary lang="hu_HU">InputStream kliens az adaptív streamekhez</summary>
-    <summary lang="is_IS">InputStream-biðlari fyrir aðlaganleg streymi</summary>
-    <summary lang="it_IT">Client InputStream per flussi adattivi</summary>
-    <summary lang="ko_KR">적응형 스트림을 위한 InputStream 클라이언트</summary>
-    <summary lang="lv_LV">InputStream klients adaptīvām straumēm</summary>
-    <summary lang="nl_NL">InputStream client voor adaptive streams</summary>
-    <summary lang="pl_PL">Klient InputStream dla strumieni adaptacyjnych</summary>
-    <summary lang="pt_BR">Cliente InputStream para transmissões adaptáveis</summary>
-    <summary lang="ru_RU">Клиент InputStream для адаптивных потоков</summary>
-    <summary lang="zh_CN">用于自适应流的 InputStream 客户端</summary>
-    <description lang="ca_ES">Client InputStream per a transmissions adaptatives</description>
-    <description lang="cs_CZ">Klient adaptivních toků protokolu InputStream</description>
-    <description lang="da_DK">InputStream-klient til adaptive streams</description>
-    <description lang="de_DE">InputStream-Client für adaptive Streams. Unterstützt werden Streamingprotokolle wie MPEG-DASH, HLS und Microsoft Smooth Streaming.[CR][CR] Das Addon unterstützt ebenfalls DRM-geschützte Streams, wie Google Widevine, Microsoft Playready und andere.[CR][CR]Für Dokumentation https://github.com/xbmc/inputstream.adaptive besuchen</description>
-    <description lang="en_GB">InputStream client for adaptive streams. Common streaming protocols such as MPEG-DASH, HLS and Microsoft Smooth Streaming are supported.[CR][CR]The add-on also has support for DRM protected streams, such as Google Widevine, Microsoft PlayReady and others.[CR][CR]For documentation visit: https://github.com/xbmc/inputstream.adaptive</description>
-    <description lang="es_ES">Cliente InputStream para transmisiones de datos adaptativos. Se admiten protocolos de transmisión comunes como MPEG-DASH, HLS y Microsoft Smooth Streaming.[CR][CR]El complemento también es compatible con transmisiones protegidas por DRM, como Google Widevine, Microsoft PlayReady y otros.[CR][CR]Para consultar la documentación, visite: https://github.com/xbmc/inputstream.adaptive</description>
-    <description lang="es_MX">Cliente InputStream para transmisiones adaptativas</description>
-    <description lang="et_EE">InputStream klient adaptiivsete voogude jaoks. Toetatakse levinud voogedastusprotokolle, nagu MPEG-DASH, HLS ja Microsoft Smooth Streaming.[CR][CR]Lisamoodul toetab ka DRM-iga kaitstud vooge, nagu Google Widevine, Microsoft PlayReady ja teised.[CR][CR][CR] ]Dokumentatsiooni saamiseks külasta aadressi https://github.com/xbmc/inputstream.adaptive</description>
-    <description lang="fi_FI">InputStream-asiakas mukautuville mediavirroille, joka tukee yleisiä suoratoistoprotokollia, kuten MPEG-DASH, HLS ja Microsoft Smooth Streaming.[CR][CR]Tukee myös mm. Google Widevine ja Microsoft PlayReady -tekniikoilla DRM-suojattua suoratoistoa.[CR][CR]Ohjeita löydät osoitteesta https://github.com/xbmc/inputstream.adaptive.</description>
-    <description lang="fr_FR">Client InputStream pour les flux adaptatifs. Les protocoles de streaming courants tels que MPEG-DASH, HLS et Microsoft Smooth Streaming sont pris en charge.[CR][CR]Le module complémentaire prend également en charge les flux protégés par DRM, tels que Google Widevine, Microsoft PlayReady et autres.[CR][CR] Pour la documentation, visitez : https://github.com/xbmc/inputstream.adaptive</description>
-    <description lang="he_IL">לקוח InputStream לתזרימים מסתגלים</description>
-    <description lang="hr_HR">InputStream klijent za prilagodljiva strujanja</description>
-    <description lang="hu_HU">InputStream kliens az adaptív streamekhez</description>
-    <description lang="it_IT">Client InputStream per flussi adattivi. Sono supportati protocolli di streaming comuni come MPEG-DASH, HLS e Microsoft Smooth Streaming.[CR][CR]L'add-on supporta anche flussi protetti da DRM, come Google Widevine, Microsoft PlayReady e altri.[CR][CR] ]Per la documentazione visita: https://github.com/xbmc/inputstream.adaptive</description>
-    <description lang="ko_KR">적응형 스트림을 위한 InputStream 클라이언트입니다. MPEG-DASH, HLS 및 Microsoft Smooth Streaming과 같은 일반적인 스트리밍 프로토콜이 지원됩니다.[CR][CR]추가 기능은 Google Widevine, Microsoft PlayReady 등과 같은 DRM 보호 스트림도 지원합니다.[CR][CR ]문서를 보려면 https://github.com/xbmc/inputstream.adaptive를 방문하세요</description>
-    <description lang="lv_LV">InputStream klients adaptīvām straumēm</description>
-    <description lang="pl_PL">Klient InputStream dla strumieni adaptacyjnych. Obsługiwane są popularne protokoły przesyłania strumieniowego, takie jak MPEG-DASH, HLS i Microsoft Smooth Streaming.[CR][CR]Dodatek obsługuje również strumienie chronione DRM, takie jak Google Widevine, Microsoft PlayReady i inne.[CR][CR] ]Dokumentacja znajduje się na stronie: https://github.com/xbmc/inputstream.adaptive</description>
-    <description lang="pt_BR">Cliente InputStream para transmissões adaptáveis. Há suporte para protocolos de streaming comuns, como MPEG-DASH, HLS e Microsoft Smooth Streaming.[CR][CR]O addon também oferece suporte a transmissões protegidas por DRM, como Google Widevine, Microsoft PlayReady e outros.[CR][CR]Para obter a documentação, visite: https://github.com/xbmc/inputstream.adaptive</description>
-    <description lang="ru_RU">Клиент InputStream для адаптивных потоков. Поддерживаются такие распространенные потоковые протоколы, как MPEG-DASH, HLS и Microsoft Smooth Streaming.[CR][CR]Дополнение также поддерживает потоки, защищенные DRM, такие как Google Widevine, Microsoft PlayReady и другие.[CR][CR]Для получения документации посетите: https://github.com/xbmc/inputstream.adaptive</description>
-    <description lang="zh_CN">用于自适应流的 InputStream 客户端</description>
   </extension>
+</addon>
+
+<addon id="script.embuary.helper" name="Embuary Helper" version="2.0.9-p3i.1" provider-name="sualfred">
+    <requires>
+        <import addon="xbmc.python" version="3.0.0"/>
+        <import addon="script.module.pil" version="1.1.7"/>
+    </requires>
+    <extension point="xbmc.python.script" library="default.py">
+        <provides>executable</provides>
+    </extension>
+    <extension point="xbmc.python.pluginsource" library="plugin.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.service" library="service.py" />
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <news>v2.0.9-p3i.1: Skip the background fanart grabber and PIL blur while anything is playing (they ran synchronously on the service thread every ~200s and caused microstutters on constrained boxes). Gated on isPlaying so pauses/seeks cannot let it slip through and hitch playback on resume. Based on upstream 2.0.9. Upstream PR: sualfred/script.embuary.helper#73</news>
+        <license>GPL-2.0-only</license>
+        <forum>https://forum.kodi.tv/showthread.php?tid=345318</forum>
+        <source>https://github.com/sualfred/script.embuary.helper</source>
+        <assets>
+            <icon>resources/icon.png</icon>
+            <fanart>resources/fanart.jpg</fanart>
+        </assets>
+        <summary lang="en_GB">Embuary Helper Script</summary>
+        <description lang="en_GB">Helper script to provide features and functions to the Embuary skin. A full documentation can be found on GitHub: https://github.com/sualfred/script.embuary.helper/wiki</description>
+    </extension>
 </addon>
 
 <addon id="inputstream.ffmpegdirect" version="666.22.2.5-p3i.1" name="Inputstream FFmpeg Direct" provider-name="Ross Nicholson">
@@ -172,105 +190,6 @@ provider-name="jurialmunkey">
     <screenshot>resources/screenshot-02.jpg</screenshot>
   </assets>
 </extension>
-</addon>
-
-<addon id="repository.p3i" name="p3i" version="0.1.2" provider-name="pannal">
-    <extension point="xbmc.addon.repository" name="p3i Kodi Repo">
-        <dir minversion="20.90.0">
-            <info compressed="false">https://raw.githubusercontent.com/pannal/p3i_repo/master/omega/zips/addons.xml</info>
-            <checksum>https://raw.githubusercontent.com/pannal/p3i_repo/master/omega/zips/addons.xml.md5</checksum>
-            <datadir zip="true">https://raw.githubusercontent.com/pannal/p3i_repo/master/omega/zips/</datadir>
-        </dir>
-    </extension>
-    <extension point="xbmc.addon.metadata">
-        <summary>p3i</summary>
-        <description>Binary and Python addons built for the p3i CoreELEC build (aml-4.9-21.3 lineage).</description>
-        <disclaimer></disclaimer>
-        <platform>all</platform>
-        <assets>
-            <icon>icon.png</icon>
-            <fanart>fanart.png</fanart>
-        </assets>
-    </extension>
-</addon>
-
-<addon id="script.embuary.helper" name="Embuary Helper" version="2.0.9-p3i.1" provider-name="sualfred">
-    <requires>
-        <import addon="xbmc.python" version="3.0.0"/>
-        <import addon="script.module.pil" version="1.1.7"/>
-    </requires>
-    <extension point="xbmc.python.script" library="default.py">
-        <provides>executable</provides>
-    </extension>
-    <extension point="xbmc.python.pluginsource" library="plugin.py">
-        <provides>video</provides>
-    </extension>
-    <extension point="xbmc.service" library="service.py" />
-    <extension point="xbmc.addon.metadata">
-        <platform>all</platform>
-        <news>v2.0.9-p3i.1: Skip the background fanart grabber and PIL blur while anything is playing (they ran synchronously on the service thread every ~200s and caused microstutters on constrained boxes). Gated on isPlaying so pauses/seeks cannot let it slip through and hitch playback on resume. Based on upstream 2.0.9. Upstream PR: sualfred/script.embuary.helper#73</news>
-        <license>GPL-2.0-only</license>
-        <forum>https://forum.kodi.tv/showthread.php?tid=345318</forum>
-        <source>https://github.com/sualfred/script.embuary.helper</source>
-        <assets>
-            <icon>resources/icon.png</icon>
-            <fanart>resources/fanart.jpg</fanart>
-        </assets>
-        <summary lang="en_GB">Embuary Helper Script</summary>
-        <description lang="en_GB">Helper script to provide features and functions to the Embuary skin. A full documentation can be found on GitHub: https://github.com/sualfred/script.embuary.helper/wiki</description>
-    </extension>
-</addon>
-
-<addon id="script.module.jurialmunkey" name="jurialmunkey common" provider-name="jurialmunkey" version="0.2.35">
-  <requires>
-    <import addon="xbmc.python" version="3.0.1"/>
-    <import addon="script.module.requests" version="2.9.1"/>
-    <import addon="script.module.infotagger" version="0.0.5" />
-  </requires>
-  <extension point="xbmc.python.module" library="resources/modules" />
-  <extension point="xbmc.addon.metadata">
-    <description lang="en_GB">Common code required by TMDbHelper and other related jurialmunkey add-ons</description>
-    <description lang="zh_CN">TMDb 助手及其他相关 jurialmunkey 插件所需的通用代码</description>
-    <license>GPL-3.0-or-later</license>
-    <website>https://github.com/jurialmunkey/script.module.jurialmunkey</website>
-    <assets>
-      <icon>icon.png</icon>
-    </assets>
-  </extension>
-</addon>
-
-<addon id="service.p3i.override" name="p3i Per-Folder Setting Override" version="0.1.8" provider-name="pannal">
-    <requires>
-        <import addon="xbmc.python" version="3.0.0"/>
-    </requires>
-    <extension point="xbmc.service" library="service.py"/>
-    <extension point="xbmc.addon.metadata">
-        <summary lang="en_GB">Per-folder Kodi setting overrides via override.ini.</summary>
-        <description lang="en_GB">Opt-in service addon for the p3i CoreELEC build. Reads "override.ini" from the playing file's folder and one parent folder, applies any Kodi setting overrides listed there at AV-start, and restores the previous values on stop. INI format: bare "kodi.setting.id = value" lines, or [global] and [filename or glob] sections that cover flat libraries and TV season folders without scattering files. Cascade is broadest-first, narrower wins. Ships with a verified-settings catalog covering Dolby Vision dynamic knobs (CMv4.0 append, L5 active-area override and enable surfaces), LAV seamless-branching mode, and the subtitle pipeline (PGS HDR-to-SDR shader tonemap params, style, render-time settings) — entries outside the catalog still write, but log a warning that mid-playback effect isn't guaranteed. If service.p3i.sb is installed, override.ini entries for the LAV seamless-branching key are skipped — that addon owns the key. Unlike the SB helper, this addon does not defer to PlexMod4Kodi: PM4K's Plex streams use http(s) URLs which are skipped by the remote-scheme filter, and for local files played through PM4K the user's override.ini still applies as written.</description>
-        <platform>linux</platform>
-        <license>GPL-2.0-or-later</license>
-        <source>https://github.com/pannal/p3i_repo</source>
-        <assets>
-            <icon>resources/icon.png</icon>
-        </assets>
-    </extension>
-</addon>
-
-<addon id="service.p3i.sb" name="p3i Seamless Branching Helper" version="0.1.6" provider-name="pannal">
-    <requires>
-        <import addon="xbmc.python" version="3.0.0"/>
-    </requires>
-    <extension point="xbmc.service" library="service.py"/>
-    <extension point="xbmc.addon.metadata">
-        <summary lang="en_GB">Auto-enables the CoreELEC LAV seamless-branching workaround for known SB titles.</summary>
-        <description lang="en_GB">Service addon for the p3i CoreELEC build. When a movie with a known seamless-branching audio issue (TrueHD or tms EAC3) starts playing, this addon toggles the CoreELEC LAV filter mode to avoid audio dropouts, and restores the previous mode on stop. Matches both IMDb and TMDB IDs against a bundled, curated list. Defers automatically when PlexMod4Kodi (script.plexmod) is running, since PM4K handles the same workaround for Plex-sourced playback.</description>
-        <platform>linux</platform>
-        <license>GPL-2.0-or-later</license>
-        <source>https://github.com/pannal/p3i_repo</source>
-        <assets>
-            <icon>resources/icon.png</icon>
-        </assets>
-    </extension>
 </addon>
 
 <addon id="skin.p3i.estuary" version="8.8.17" name="p3i.Estuary" provider-name="phil65, Ichabod Fletchman">
@@ -458,6 +377,104 @@ provider-name="jurialmunkey">
 		<disclaimer lang="zh_CN">Estuary 是 Kodi 的默认皮肤，删除它可能导致故障。</disclaimer>
 		<disclaimer lang="zh_TW">Estuary 是 Kodi 預設的佈景主題，移除它可能會造成問題</disclaimer>
 	</extension>
+</addon>
+
+<addon id="inputstream.adaptive" version="666.21.5.18-p3i.1" name="InputStream Adaptive" provider-name="peak3d, Team Kodi">
+  <requires>
+    <import addon="kodi.binary.global.main" minversion="2.0.0" version="2.0.2"/>
+    <import addon="kodi.binary.global.general" minversion="1.0.4" version="1.0.5"/>
+    <import addon="kodi.binary.global.gui" minversion="5.15.0" version="5.15.0"/>
+    <import addon="kodi.binary.global.filesystem" minversion="1.1.7" version="1.1.9"/>
+    <import addon="kodi.binary.global.tools" minversion="1.0.0" version="1.0.4"/>
+    <import addon="kodi.binary.instance.inputstream" minversion="3.3.0" version="3.3.0"/>
+    <import addon="kodi.binary.instance.videocodec" minversion="2.1.0" version="2.1.0"/>
+  </requires>
+  <extension point="kodi.inputstream" name="adaptive" extension="" tags="true" listitemprops="drm_legacy|license_type|license_key|license_url|license_url_append|license_data|license_flags|manifest_type|server_certificate|manifest_update_parameter|manifest_upd_params|manifest_params|manifest_headers|stream_params|stream_headers|original_audio_language|play_timeshift_buffer|pre_init_data|stream_selection_type|chooser_bandwidth_max|chooser_resolution_max|chooser_resolution_secure_max|live_delay|internal_cookies|config|manifest_config" library_linux="inputstream.adaptive.so.21.5.18"/>
+  <extension point="xbmc.addon.metadata">
+    <platform/>
+    <license>GPL-2.0-or-later</license>
+    <source>https://github.com/xbmc/inputstream.adaptive</source>
+    <assets>
+      <icon>resources/icon.png</icon>
+      <fanart>resources/fanart.jpg</fanart>
+    </assets>
+    <summary lang="ca_ES">Client InputStream per a transmissions adaptatives</summary>
+    <summary lang="cs_CZ">Klient adaptivních toků protokolu InputStream</summary>
+    <summary lang="da_DK">InputStream-klient til adaptive streams</summary>
+    <summary lang="de_DE">InputStream-Client für adaptive Streams</summary>
+    <summary lang="en_GB">InputStream client for adaptive streams</summary>
+    <summary lang="es_ES">Cliente InputStream para transmisiones adaptativas</summary>
+    <summary lang="es_MX">Cliente InputStream para transmisiones adaptativas</summary>
+    <summary lang="et_EE">InputStream klient kohanduvate voogude jaoks</summary>
+    <summary lang="fi_FI">InputStream-asiakas mukautuville mediavirroille</summary>
+    <summary lang="fr_FR">Client InputStream pour les flux adaptatifs</summary>
+    <summary lang="he_IL">לקוח InputStream לתזרימים מסתגלים</summary>
+    <summary lang="hr_HR">InputStream klijent za prilagodljiva strujanja</summary>
+    <summary lang="hu_HU">InputStream kliens az adaptív streamekhez</summary>
+    <summary lang="is_IS">InputStream-biðlari fyrir aðlaganleg streymi</summary>
+    <summary lang="it_IT">Client InputStream per flussi adattivi</summary>
+    <summary lang="ko_KR">적응형 스트림을 위한 InputStream 클라이언트</summary>
+    <summary lang="lv_LV">InputStream klients adaptīvām straumēm</summary>
+    <summary lang="nl_NL">InputStream client voor adaptive streams</summary>
+    <summary lang="pl_PL">Klient InputStream dla strumieni adaptacyjnych</summary>
+    <summary lang="pt_BR">Cliente InputStream para transmissões adaptáveis</summary>
+    <summary lang="ru_RU">Клиент InputStream для адаптивных потоков</summary>
+    <summary lang="zh_CN">用于自适应流的 InputStream 客户端</summary>
+    <description lang="ca_ES">Client InputStream per a transmissions adaptatives</description>
+    <description lang="cs_CZ">Klient adaptivních toků protokolu InputStream</description>
+    <description lang="da_DK">InputStream-klient til adaptive streams</description>
+    <description lang="de_DE">InputStream-Client für adaptive Streams. Unterstützt werden Streamingprotokolle wie MPEG-DASH, HLS und Microsoft Smooth Streaming.[CR][CR] Das Addon unterstützt ebenfalls DRM-geschützte Streams, wie Google Widevine, Microsoft Playready und andere.[CR][CR]Für Dokumentation https://github.com/xbmc/inputstream.adaptive besuchen</description>
+    <description lang="en_GB">InputStream client for adaptive streams. Common streaming protocols such as MPEG-DASH, HLS and Microsoft Smooth Streaming are supported.[CR][CR]The add-on also has support for DRM protected streams, such as Google Widevine, Microsoft PlayReady and others.[CR][CR]For documentation visit: https://github.com/xbmc/inputstream.adaptive</description>
+    <description lang="es_ES">Cliente InputStream para transmisiones de datos adaptativos. Se admiten protocolos de transmisión comunes como MPEG-DASH, HLS y Microsoft Smooth Streaming.[CR][CR]El complemento también es compatible con transmisiones protegidas por DRM, como Google Widevine, Microsoft PlayReady y otros.[CR][CR]Para consultar la documentación, visite: https://github.com/xbmc/inputstream.adaptive</description>
+    <description lang="es_MX">Cliente InputStream para transmisiones adaptativas</description>
+    <description lang="et_EE">InputStream klient adaptiivsete voogude jaoks. Toetatakse levinud voogedastusprotokolle, nagu MPEG-DASH, HLS ja Microsoft Smooth Streaming.[CR][CR]Lisamoodul toetab ka DRM-iga kaitstud vooge, nagu Google Widevine, Microsoft PlayReady ja teised.[CR][CR][CR] ]Dokumentatsiooni saamiseks külasta aadressi https://github.com/xbmc/inputstream.adaptive</description>
+    <description lang="fi_FI">InputStream-asiakas mukautuville mediavirroille, joka tukee yleisiä suoratoistoprotokollia, kuten MPEG-DASH, HLS ja Microsoft Smooth Streaming.[CR][CR]Tukee myös mm. Google Widevine ja Microsoft PlayReady -tekniikoilla DRM-suojattua suoratoistoa.[CR][CR]Ohjeita löydät osoitteesta https://github.com/xbmc/inputstream.adaptive.</description>
+    <description lang="fr_FR">Client InputStream pour les flux adaptatifs. Les protocoles de streaming courants tels que MPEG-DASH, HLS et Microsoft Smooth Streaming sont pris en charge.[CR][CR]Le module complémentaire prend également en charge les flux protégés par DRM, tels que Google Widevine, Microsoft PlayReady et autres.[CR][CR] Pour la documentation, visitez : https://github.com/xbmc/inputstream.adaptive</description>
+    <description lang="he_IL">לקוח InputStream לתזרימים מסתגלים</description>
+    <description lang="hr_HR">InputStream klijent za prilagodljiva strujanja</description>
+    <description lang="hu_HU">InputStream kliens az adaptív streamekhez</description>
+    <description lang="it_IT">Client InputStream per flussi adattivi. Sono supportati protocolli di streaming comuni come MPEG-DASH, HLS e Microsoft Smooth Streaming.[CR][CR]L'add-on supporta anche flussi protetti da DRM, come Google Widevine, Microsoft PlayReady e altri.[CR][CR] ]Per la documentazione visita: https://github.com/xbmc/inputstream.adaptive</description>
+    <description lang="ko_KR">적응형 스트림을 위한 InputStream 클라이언트입니다. MPEG-DASH, HLS 및 Microsoft Smooth Streaming과 같은 일반적인 스트리밍 프로토콜이 지원됩니다.[CR][CR]추가 기능은 Google Widevine, Microsoft PlayReady 등과 같은 DRM 보호 스트림도 지원합니다.[CR][CR ]문서를 보려면 https://github.com/xbmc/inputstream.adaptive를 방문하세요</description>
+    <description lang="lv_LV">InputStream klients adaptīvām straumēm</description>
+    <description lang="pl_PL">Klient InputStream dla strumieni adaptacyjnych. Obsługiwane są popularne protokoły przesyłania strumieniowego, takie jak MPEG-DASH, HLS i Microsoft Smooth Streaming.[CR][CR]Dodatek obsługuje również strumienie chronione DRM, takie jak Google Widevine, Microsoft PlayReady i inne.[CR][CR] ]Dokumentacja znajduje się na stronie: https://github.com/xbmc/inputstream.adaptive</description>
+    <description lang="pt_BR">Cliente InputStream para transmissões adaptáveis. Há suporte para protocolos de streaming comuns, como MPEG-DASH, HLS e Microsoft Smooth Streaming.[CR][CR]O addon também oferece suporte a transmissões protegidas por DRM, como Google Widevine, Microsoft PlayReady e outros.[CR][CR]Para obter a documentação, visite: https://github.com/xbmc/inputstream.adaptive</description>
+    <description lang="ru_RU">Клиент InputStream для адаптивных потоков. Поддерживаются такие распространенные потоковые протоколы, как MPEG-DASH, HLS и Microsoft Smooth Streaming.[CR][CR]Дополнение также поддерживает потоки, защищенные DRM, такие как Google Widevine, Microsoft PlayReady и другие.[CR][CR]Для получения документации посетите: https://github.com/xbmc/inputstream.adaptive</description>
+    <description lang="zh_CN">用于自适应流的 InputStream 客户端</description>
+  </extension>
+</addon>
+
+<addon id="service.p3i.override" name="p3i Per-Folder Setting Override" version="0.1.9" provider-name="pannal">
+    <requires>
+        <import addon="xbmc.python" version="3.0.0"/>
+    </requires>
+    <extension point="xbmc.service" library="service.py"/>
+    <extension point="xbmc.addon.metadata">
+        <summary lang="en_GB">Per-folder Kodi setting overrides via override.ini.</summary>
+        <description lang="en_GB">Opt-in service addon for the p3i CoreELEC build. Reads "override.ini" from the playing file's folder and one parent folder, applies any Kodi setting overrides listed there at AV-start, and restores the previous values on stop. INI format: bare "kodi.setting.id = value" lines, or [global] and [filename or glob] sections that cover flat libraries and TV season folders without scattering files. Cascade is broadest-first, narrower wins. Ships with a verified-settings catalog covering Dolby Vision dynamic knobs (CMv4.0 append, L5 active-area override and enable surfaces), LAV seamless-branching mode, and the subtitle pipeline (PGS HDR-to-SDR shader tonemap params, style, render-time settings) — entries outside the catalog still write, but log a warning that mid-playback effect isn't guaranteed. If service.p3i.sb is installed, override.ini entries for the LAV seamless-branching key are skipped — that addon owns the key. Unlike the SB helper, this addon does not defer to PlexMod4Kodi: PM4K's Plex streams use http(s) URLs which are skipped by the remote-scheme filter, and for local files played through PM4K the user's override.ini still applies as written.</description>
+        <platform>linux</platform>
+        <license>GPL-2.0-or-later</license>
+        <source>https://github.com/pannal/p3i_repo</source>
+        <assets>
+            <icon>resources/icon.png</icon>
+        </assets>
+    </extension>
+</addon>
+
+<addon id="service.p3i.override" name="p3i Per-Folder Setting Override" version="0.1.8" provider-name="pannal">
+    <requires>
+        <import addon="xbmc.python" version="3.0.0"/>
+    </requires>
+    <extension point="xbmc.service" library="service.py"/>
+    <extension point="xbmc.addon.metadata">
+        <summary lang="en_GB">Per-folder Kodi setting overrides via override.ini.</summary>
+        <description lang="en_GB">Opt-in service addon for the p3i CoreELEC build. Reads "override.ini" from the playing file's folder and one parent folder, applies any Kodi setting overrides listed there at AV-start, and restores the previous values on stop. INI format: bare "kodi.setting.id = value" lines, or [global] and [filename or glob] sections that cover flat libraries and TV season folders without scattering files. Cascade is broadest-first, narrower wins. Ships with a verified-settings catalog covering Dolby Vision dynamic knobs (CMv4.0 append, L5 active-area override and enable surfaces), LAV seamless-branching mode, and the subtitle pipeline (PGS HDR-to-SDR shader tonemap params, style, render-time settings) — entries outside the catalog still write, but log a warning that mid-playback effect isn't guaranteed. If service.p3i.sb is installed, override.ini entries for the LAV seamless-branching key are skipped — that addon owns the key. Unlike the SB helper, this addon does not defer to PlexMod4Kodi: PM4K's Plex streams use http(s) URLs which are skipped by the remote-scheme filter, and for local files played through PM4K the user's override.ini still applies as written.</description>
+        <platform>linux</platform>
+        <license>GPL-2.0-or-later</license>
+        <source>https://github.com/pannal/p3i_repo</source>
+        <assets>
+            <icon>resources/icon.png</icon>
+        </assets>
+    </extension>
 </addon>
 
 <addon id="skin.p3i.estuary" version="8.8.16" name="p3i.Estuary" provider-name="phil65, Ichabod Fletchman">

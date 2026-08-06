@@ -189,6 +189,9 @@ Status legend:
   an observer fires on settings change and the next drawn subtitle picks
   it up. Applies within one cue (typically <1s for dense dialogue, longer
   for sparse subs).
+- **live-on-seek** — value is applied at codec open AND on every codec
+  `Reset()` (seek/flush). A write from `onAVStarted` lands on the first
+  seek, not instantly.
 - **lav-class** — sampled once at codec/stream open and cached. Needs a
   C++ patch before late writes take effect.
 - **needs-restart** — sampled at codec/stream/demuxer open or app startup
@@ -212,6 +215,46 @@ Status legend:
 | Setting ID | Status | Notes |
 | --- | --- | --- |
 | `coreelec.amlogic.dolbyvision.audio.seamlessbranch` | live | LAV SB mode. **Skipped if `service.p3i.sb` is installed** — use that addon instead. Values: `0`=off, `1`=seek-sync, `3`=debug, `4`=LAV SB, `5`=LAV full. |
+| `audiooutput.drc` | live-on-seek | AC3/E-AC3 dynamic range compression, `0`–`100` (%). Applied at codec open and re-applied on every `Reset()` — takes effect on the first seek after the write. `advancedsettings.xml` `<applydrc>` wins when set. |
+| `audiooutput.ignoredownmixmetadata` | live | Read per-frame when the stream carries downmix side data. Per-title escape hatch for broken downmix metadata. |
+
+### Audio — downmix / resampler
+
+Live since the T4 `ConfigureResampler` change-detect patch: a mid-playback
+write recreates the resampler with the new downmix matrix. Before that
+build these were sampled once at stream open.
+
+| Setting ID | Status | Notes |
+| --- | --- | --- |
+| `audiooutput.maintainoriginalvolume` | live | Downmix normalization on/off. Only matters when downmixing to fewer channels. |
+| `audiooutput.boostcenter` | live | Centre-channel boost (dB, float; `0.0` = off), folded into the downmix matrix. |
+| `audiooutput.lfemixto` | live | `0`=LFE dropped, `1`=redirect LFE to front L/R. Needs `audiooutput.mixsublevel` > 0. |
+| `audiooutput.mixsublevel` | live | LFE level in the downmix, `0`–`100` (%). |
+| `audiooutput.stereoupmix` | live | 2.0 → multichannel upmix. Only writable when the sink offers more than 2 channels (visible-dependency). |
+
+### Audio — passthrough codec toggles
+
+Live since the T4 VideoPlayerAudio settings-callback patch: a change flags
+the player thread, which re-runs the decode-vs-passthrough choice
+(`SwitchCodecIfNeeded`) with live setting reads. Expect a short audio drop
+while the codec switches.
+
+**Visibility:** all format toggles are dependency-hidden unless the master
+`audiooutput.passthrough` is enabled AND the passthrough device supports the
+format — a write to a hidden setting fails with `InvalidParams` (the addon
+logs it). The master `audiooutput.passthrough` toggle itself is **not**
+exposed here: changing it triggers a full playback restart
+(`TMSG_MEDIA_RESTART`).
+
+| Setting ID | Status | Notes |
+| --- | --- | --- |
+| `audiooutput.ac3passthrough` | live | |
+| `audiooutput.eac3passthrough` | live | |
+| `audiooutput.dtspassthrough` | live | Covers plain DTS and the DTS-HD core fallback path. |
+| `audiooutput.dtshdpassthrough` | live | DTS-HD HRA/MA. |
+| `audiooutput.truehdpassthrough` | live | Per-title "decode TrueHD instead of bitstreaming" — e.g. titles whose TrueHD overloads the receiver. |
+| `audiooutput.ac3transcode` | live | Multichannel PCM → AC3 transcode. Codec choice reacts live; the engine-side transcode decision lands with the RECONFIGURE a moment later. |
+| `audiooutput.dtshdcorefallback` | live | DTS core fallback when DTS-HD passthrough is off. Dependency-hidden unless `audiooutput.dtshdpassthrough` is **false** — put the `dtshdpassthrough = false` line *above* this one in override.ini (keys apply in file order). |
 
 ### Subtitles — PGS HDR-to-SDR shader params
 

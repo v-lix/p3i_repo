@@ -1,3 +1,24 @@
+v0.1.9
+- 14 audiooutput.* settings added to the verified catalog:
+  - audiooutput.drc (new "live-on-seek" status: applied at codec open and
+    on every seek/flush), audiooutput.ignoredownmixmetadata (per-frame
+    live), audiooutput.maintainoriginalvolume (live).
+  - Downmix/resampler: boostcenter, lfemixto, mixsublevel, stereoupmix.
+    Live on T4 builds with the ConfigureResampler change-detect patch
+    (xbmc f5ffe940c8); sampled at stream open on older builds.
+  - Passthrough codec toggles: ac3passthrough, eac3passthrough,
+    dtspassthrough, dtshdpassthrough, truehdpassthrough, ac3transcode,
+    dtshdcorefallback. Live codec re-selection on T4 builds with the
+    VideoPlayerAudio settings-callback patch (same commit); expect a
+    short audio drop on switch.
+  - Visibility traps documented: format toggles are dependency-hidden
+    unless master passthrough is on and the device supports the format
+    (hidden writes fail with InvalidParams, logged);
+    dtshdcorefallback is hidden unless dtshdpassthrough is false — order
+    the lines accordingly (keys apply in file order).
+  - The master audiooutput.passthrough toggle is deliberately NOT
+    exposed: changing it restarts playback.
+
 v0.1.8
 - Docs: the L5 override now also flows to the TV (not just Kodi-side
   overlay calc). Requires matching xbmc + amdolby_vision kernel patches
