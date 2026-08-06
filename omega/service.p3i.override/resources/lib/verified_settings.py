@@ -151,9 +151,9 @@ VERIFIED = {
         "type": "float",
         "values": "0.0 = off; dB of centre boost otherwise",
         "notes": (
-            "Centre-channel boost folded into the downmix matrix. Live since "
-            "the T4 ConfigureResampler change-detect patch (recreates the "
-            "resampler on change); before that build it was sampled at "
+            "Centre-channel boost folded into the downmix matrix. Live from "
+            "T4c (xbmc f5ffe940c8, ConfigureResampler change-detect: "
+            "recreates the resampler on change); older builds sample it at "
             "stream open only."
         ),
     },
@@ -163,29 +163,28 @@ VERIFIED = {
         "values": "0=LFE dropped/default, 1=redirect LFE to front L/R",
         "notes": (
             "LFE downmix routing; needs audiooutput.mixsublevel > 0 to have "
-            "any effect. Live since the T4 ConfigureResampler change-detect "
-            "patch."
+            "any effect. Live from T4c (xbmc f5ffe940c8)."
         ),
     },
     "audiooutput.mixsublevel": {
         "status": "live",
         "type": "int",
         "values": "0-100 (percent LFE level in downmix)",
-        "notes": "LFE level in the downmix matrix. Live since the T4 ConfigureResampler change-detect patch.",
+        "notes": "LFE level in the downmix matrix. Live from T4c (xbmc f5ffe940c8).",
     },
     "audiooutput.stereoupmix": {
         "status": "live",
         "type": "bool",
         "notes": (
-            "2.0 -> multichannel upmix. Live since the T4 ConfigureResampler "
-            "change-detect patch. Visible-dependency: only writable when the "
-            "sink offers >2 channels."
+            "2.0 -> multichannel upmix. Live from T4c (xbmc f5ffe940c8). "
+            "Visible-dependency: only writable when the sink offers >2 "
+            "channels."
         ),
     },
 
     # ------- Audio: passthrough codec toggles (live codec re-selection) -------
-    # All of these are made live by the T4 VideoPlayerAudio settings-callback
-    # patch: a change flags the player thread, which re-runs
+    # All of these are live from T4c (xbmc f5ffe940c8, VideoPlayerAudio
+    # settings callback): a change flags the player thread, which re-runs
     # SwitchCodecIfNeeded() with live setting reads (SupportsRaw). Expect a
     # short audio drop while the codec switches.
     # VISIBILITY: all format toggles are dependency-hidden unless master

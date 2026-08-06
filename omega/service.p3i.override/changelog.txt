@@ -4,13 +4,12 @@ v0.1.9
     on every seek/flush), audiooutput.ignoredownmixmetadata (per-frame
     live), audiooutput.maintainoriginalvolume (live).
   - Downmix/resampler: boostcenter, lfemixto, mixsublevel, stereoupmix.
-    Live on T4 builds with the ConfigureResampler change-detect patch
-    (xbmc f5ffe940c8); sampled at stream open on older builds.
+    Live from T4c (xbmc f5ffe940c8); sampled at stream open on older
+    builds.
   - Passthrough codec toggles: ac3passthrough, eac3passthrough,
     dtspassthrough, dtshdpassthrough, truehdpassthrough, ac3transcode,
-    dtshdcorefallback. Live codec re-selection on T4 builds with the
-    VideoPlayerAudio settings-callback patch (same commit); expect a
-    short audio drop on switch.
+    dtshdcorefallback. Live codec re-selection from T4c (same commit);
+    expect a short audio drop on switch.
   - Visibility traps documented: format toggles are dependency-hidden
     unless master passthrough is on and the device supports the format
     (hidden writes fail with InvalidParams, logged);
