@@ -220,9 +220,8 @@ Status legend:
 
 ### Audio — downmix / resampler
 
-Live from **T4c** (xbmc `f5ffe940c8`): a mid-playback write recreates the
-resampler with the new downmix matrix. Older builds sample these once at
-stream open.
+Live from **T4c**: a mid-playback write recreates the resampler with the
+new downmix matrix. Older builds sample these once at stream open.
 
 | Setting ID | Status | Notes |
 | --- | --- | --- |
@@ -234,9 +233,9 @@ stream open.
 
 ### Audio — passthrough codec toggles
 
-Live from **T4c** (xbmc `f5ffe940c8`): a change flags the player thread,
-which re-runs the decode-vs-passthrough choice (`SwitchCodecIfNeeded`) with
-live setting reads. Expect a short audio drop while the codec switches.
+Live from **T4c**: a change flags the player thread, which re-runs the
+decode-vs-passthrough choice (`SwitchCodecIfNeeded`) with live setting
+reads. Expect a short audio drop while the codec switches.
 
 **Visibility:** all format toggles are dependency-hidden unless the master
 `audiooutput.passthrough` is enabled AND the passthrough device supports the
