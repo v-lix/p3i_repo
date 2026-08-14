@@ -757,9 +757,12 @@
 		<value condition="String.IsEqual(ListItem.VideoResolution,4K)">UHD</value>
 		<value condition="String.IsEqual(ListItem.VideoResolution,8K)">UHD</value>	
 	</variable>
+	<variable name="VideoHDRAltVar">
+		<value condition="String.IsEqual(ListItem.HdrTypeAlt,hdr10plus)">HDR10+</value>
+		<value condition="String.IsEqual(ListItem.HdrTypeAlt,hlg)">HLG</value>
+	</variable>
 	<variable name="VideoHDRVar">
-		<value condition="String.IsEqual(ListItem.HdrType,dolbyvision) + [String.Contains(ListItem.FileName,HDR10P) | String.Contains(ListItem.FileName,HDR10Plus) | String.Contains(ListItem.FileName,HDR10+)]">Dolby Vision [COLOR grey]|[/COLOR] HDR10+</value>
-		<value condition="String.IsEqual(ListItem.HdrType,dolbyvision)">Dolby Vision</value>
+		<value condition="String.IsEqual(ListItem.HdrType,dolbyvision)">Dolby Vision$INFO[ListItem.DvProfile, P]$VAR[VideoHDRAltVar, [COLOR grey]|[/COLOR] ]</value>
 		<value condition="String.IsEqual(ListItem.HdrType,hdr10plus)">HDR10+</value>
 		<value condition="String.IsEqual(ListItem.HdrType,hdr10)">HDR10</value>
 		<value condition="String.IsEqual(ListItem.HdrType,hlg)">HLG</value>
@@ -1065,16 +1068,16 @@
         <value condition="Integer.IsEqual(VideoPlayer.AudioChannels,8)">FL, FR, FC, LFE, BL, BR, SL, SR</value>
     </variable>
 	<variable name="CodecLogoDurationLabelVar">
-		<value condition="Integer.IsLess(Skin.Numeric(osd.codeclogoduration),1)">$LOCALIZE[31677]</value>
-		<value>$INFO[Skin.String(osd.codeclogoduration)]</value>
+		<value condition="Integer.IsLess(Skin.Numeric(codeclogo.duration),1)">$LOCALIZE[31677]</value>
+		<value>$INFO[Skin.String(codeclogo.duration)]</value>
 	</variable>
-	<variable name="CodecLogoPositionLabel2Var">
-		<value condition="Skin.HasSetting(osd.usecenterCodecLogos)">$LOCALIZE[31666]</value>
-		<value condition="Skin.HasSetting(osd.userightCodecLogos)">$LOCALIZE[31667]</value>
+	<variable name="CodecLogoPositionLabelVar">
+		<value condition="Skin.HasSetting(codeclogo.center)">$LOCALIZE[31666]</value>
+		<value condition="Skin.HasSetting(codeclogo.right)">$LOCALIZE[31667]</value>
 		<value>$LOCALIZE[31665]</value>
 	</variable>
 	<variable name="CodecLogoColorVar">
-		<value condition="Skin.HasSetting(osd.codeclogolight)">codecs/</value>
+		<value condition="Skin.HasSetting(codeclogo.light)">codecs/</value>
 		<value>codecs/b_</value>
 	</variable>
 	<variable name="PixFormatVar">
